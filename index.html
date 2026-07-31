@@ -525,12 +525,23 @@ function renderMenu(){
   });
   const list=document.getElementById('menuList');
   list.innerHTML='';
+  const isFood = curCat === 'Food';
   MENU[curCat].forEach(item=>{
     const div=document.createElement('div');
     div.className='menu-item';
-    div.innerHTML='<div class="item-info"><div class="item-name">'+item.name+'</div><div class="item-desc">'+item.desc+'</div><div class="item-price">£'+item.price.toFixed(2)+'</div></div><button class="item-add-btn" onclick="openItem('+item.id+',event)">+</button>';
+    div.innerHTML='<div class="item-info"><div class="item-name">'+item.name+'</div><div class="item-desc">'+item.desc+'</div><div class="item-price">£'+item.price.toFixed(2)+'</div></div><button class="item-add-btn" onclick="'+(isFood?'openItem('+item.id+',event)':'quickAdd('+item.id+',event)')+'">+</button>';
     list.appendChild(div);
   });
+}
+function quickAdd(id,e){
+  e&&e.stopPropagation();
+  const item=Object.values(MENU).flat().find(i=>i.id===id);
+  basket.push({...item,qty:1,note:'',uid:Date.now()});
+  updateCount();
+  // Brief visual feedback on button
+  const btn=e.target;
+  btn.textContent='✓';btn.style.background='#222';
+  setTimeout(()=>{btn.textContent='+';btn.style.background='';},800);
 }
 function openItem(id,e){
   e&&e.stopPropagation();
