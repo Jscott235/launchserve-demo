@@ -174,6 +174,10 @@ input,select,textarea{font-size:16px}
 .qr-inner{position:absolute;inset:10px;background:#fff;border-radius:4px;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(7,1fr);gap:1px}
 .qr-cell{background:var(--text)}
 
+/* ── SWITCH VIEW ── */
+.switch-btn{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--text);color:#fff;border:none;border-radius:24px;padding:10px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,0.3);display:none}
+.switch-btn.visible{display:block}
+
 /* ── KITCHEN DISPLAY ── */
 #kitchenApp{background:#111;flex-direction:column}
 .kitchen-bar{background:#1a1a1a;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #333}
@@ -483,6 +487,8 @@ input,select,textarea{font-size:16px}
   </div>
 </div>
 
+<button class="switch-btn" id="switchBtn" onclick="goToRoles()">⇄ Switch View</button>
+
 <script>
 // ── DATA ──
 const MENU = {
@@ -541,8 +547,9 @@ function updateDots(clear){
 }
 
 // ── SCREENS ──
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');const btn=document.getElementById('switchBtn');btn.className='switch-btn'+(id!=='roleScreen'&&id!=='pinScreen'?' visible':'');}
 function goBack(){showScreen('roleScreen');}
+function goToRoles(){showScreen('roleScreen');}
 function showCustomer(){showScreen('customerApp');showView('tableView');}
 function showKitchen(){showScreen('kitchenApp');renderKitchen();}
 function showAdmin(){showScreen('adminApp');renderAdmin();}
