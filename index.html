@@ -230,6 +230,22 @@ input,select,textarea{font-size:16px;font-family:'DM Sans',system-ui,sans-serif}
 .ai-toggle:not(.off)::after{transform:translateX(18px)}
 .admin-add{width:100%;height:40px;border:1px dashed var(--dk-border);border-radius:8px;background:none;font-size:0.8rem;font-weight:500;color:var(--dk-muted);cursor:pointer;font-family:'DM Sans',system-ui,sans-serif;margin-top:4px;transition:all .15s}
 .admin-add:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── ADMIN ITEM MODAL ── */
+#adminModal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);align-items:flex-end;justify-content:center}
+#adminModal.active{display:flex}
+.admin-modal-card{background:var(--dk-s1);border-radius:12px 12px 0 0;padding:24px;width:100%;max-width:480px;border-top:1px solid var(--dk-border)}
+.admin-modal-title{font-size:1rem;font-weight:700;color:var(--dk-text);margin-bottom:20px}
+.admin-field{margin-bottom:14px}
+.admin-field label{display:block;font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--dk-muted);margin-bottom:6px}
+.admin-field input,.admin-field textarea{width:100%;background:var(--dk-s2);border:1px solid var(--dk-border);border-radius:6px;padding:10px 12px;font-size:16px;color:var(--dk-text);font-family:'DM Sans',system-ui,sans-serif;outline:none;transition:border-color .15s}
+.admin-field input:focus,.admin-field textarea:focus{border-color:var(--gold)}
+.admin-field textarea{height:60px;resize:none}
+.admin-modal-actions{display:flex;gap:10px;margin-top:20px}
+.admin-modal-save{flex:1;height:44px;background:var(--gold);color:#000;border:none;border-radius:6px;font-size:0.88rem;font-weight:700;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
+.admin-modal-cancel{height:44px;padding:0 20px;background:var(--dk-s2);color:var(--dk-muted);border:1px solid var(--dk-border);border-radius:6px;font-size:0.88rem;font-weight:500;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
+.admin-modal-delete{height:44px;padding:0 16px;background:none;color:#E55;border:1px solid #E55;border-radius:6px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
+
 </style>
 </head>
 <body>
@@ -399,6 +415,26 @@ input,select,textarea{font-size:16px;font-family:'DM Sans',system-ui,sans-serif}
   </div>
 </div>
 
+<!-- ── ADMIN ITEM MODAL ── -->
+<div id="adminModal">
+  <div class="admin-modal-card">
+    <div class="admin-modal-title" id="adminModalTitle">Add item</div>
+    <div class="admin-field"><label>Name</label><input type="text" id="amName" placeholder="e.g. Oat Latte"></div>
+    <div class="admin-field"><label>Description</label><textarea id="amDesc" placeholder="e.g. Smooth espresso with oat milk"></textarea></div>
+    <div class="admin-field"><label>Price (£)</label><input type="number" id="amPrice" placeholder="0.00" step="0.01" min="0"></div>
+    <div class="admin-field"><label>Category</label>
+      <select id="amCat" style="width:100%;background:var(--dk-s2);border:1px solid var(--dk-border);border-radius:6px;padding:10px 12px;font-size:16px;color:var(--dk-text);font-family:'DM Sans',system-ui,sans-serif;outline:none;-webkit-appearance:none">
+        <option>Hot drinks</option><option>Cold drinks</option><option>Food</option>
+      </select>
+    </div>
+    <div class="admin-modal-actions">
+      <button class="admin-modal-cancel" onclick="closeAdminModal()">Cancel</button>
+      <button class="admin-modal-delete" id="amDelete" style="display:none" onclick="deleteAdminItem()">Remove</button>
+      <button class="admin-modal-save" onclick="saveAdminItem()">Save item</button>
+    </div>
+  </div>
+</div>
+
 <!-- SWITCH BUTTON -->
 <button class="switch-btn" id="switchBtn" onclick="goToRoles()">Switch view</button>
 
@@ -430,20 +466,18 @@ input,select,textarea{font-size:16px;font-family:'DM Sans',system-ui,sans-serif}
     </div>
     <div class="admin-section">
       <div class="admin-section-label">Hot Drinks</div>
-      <div id="adminList"></div>
-      <button class="admin-add">+ Add item</button>
+      <div id="admin-section-Hot-drinks"></div>
+      <button class="admin-add" onclick="openAdminAdd('Hot drinks')">+ Add item</button>
     </div>
     <div class="admin-section">
       <div class="admin-section-label">Cold Drinks</div>
-      <div class="admin-item"><div class="ai-info"><div class="ai-name">Iced Latte</div><div class="ai-sub">Cold brew with oat milk</div></div><div class="ai-price">£4.20</div><button class="ai-toggle" onclick="this.classList.toggle('off')"></button></div>
-      <div class="admin-item"><div class="ai-info"><div class="ai-name">Lemonade</div><div class="ai-sub">Fresh pressed, sparkling</div></div><div class="ai-price">£3.00</div><button class="ai-toggle" onclick="this.classList.toggle('off')"></button></div>
-      <button class="admin-add">+ Add item</button>
+      <div id="admin-section-Cold-drinks"></div>
+      <button class="admin-add" onclick="openAdminAdd('Cold drinks')">+ Add item</button>
     </div>
     <div class="admin-section">
       <div class="admin-section-label">Food</div>
-      <div class="admin-item"><div class="ai-info"><div class="ai-name">Toasted Sandwich</div><div class="ai-sub">Sourdough, cheddar, choice of filling</div></div><div class="ai-price">£5.50</div><button class="ai-toggle" onclick="this.classList.toggle('off')"></button></div>
-      <div class="admin-item"><div class="ai-info"><div class="ai-name">Slice of Cake</div><div class="ai-sub">Today's selection</div></div><div class="ai-price">£3.50</div><button class="ai-toggle off" onclick="this.classList.toggle('off')"></button></div>
-      <button class="admin-add">+ Add item</button>
+      <div id="admin-section-Food"></div>
+      <button class="admin-add" onclick="openAdminAdd('Food')">+ Add item</button>
     </div>
   </div>
 </div>
@@ -622,13 +656,79 @@ function renderKitchen(){
 function markReady(id){const o=ORDERS.find(o=>o.id===id);if(o){o.status='ready';renderKitchen();}}
 function markDone(id){const i=ORDERS.findIndex(o=>o.id===id);if(i>-1){ORDERS.splice(i,1);renderKitchen();}}
 
+let adminEditId=null,adminEditCat=null;
+
 function renderAdmin(){
-  const list=document.getElementById('adminList');list.innerHTML='';
-  MENU['Hot drinks'].forEach(item=>{
-    const div=document.createElement('div');div.className='admin-item';
-    div.innerHTML='<div class="ai-info"><div class="ai-name">'+item.name+'</div><div class="ai-sub">'+item.desc+'</div></div><div class="ai-price">£'+item.price.toFixed(2)+'</div><button class="ai-toggle" onclick="this.classList.toggle(\'off\')"></button>';
-    list.appendChild(div);
+  ['Hot drinks','Cold drinks','Food'].forEach(cat=>{
+    const sectionId='admin-section-'+cat.replace(/\s/g,'-');
+    const section=document.getElementById(sectionId);
+    if(!section)return;
+    section.innerHTML='';
+    MENU[cat].forEach(item=>{
+      const div=document.createElement('div');div.className='admin-item';
+      div.innerHTML='<div class="ai-info" style="cursor:pointer" onclick="openAdminEdit(\''+cat+'\','+item.id+')"><div class="ai-name">'+item.name+'</div><div class="ai-sub">'+item.desc+'</div></div><div class="ai-price">£'+item.price.toFixed(2)+'</div><button class="ai-toggle" onclick="this.classList.toggle(\'off\')"></button>';
+      section.appendChild(div);
+    });
   });
+}
+
+function openAdminAdd(cat){
+  adminEditId=null;adminEditCat=cat;
+  document.getElementById('adminModalTitle').textContent='Add item';
+  document.getElementById('amName').value='';
+  document.getElementById('amDesc').value='';
+  document.getElementById('amPrice').value='';
+  document.getElementById('amCat').value=cat;
+  document.getElementById('amDelete').style.display='none';
+  document.getElementById('adminModal').classList.add('active');
+}
+
+function openAdminEdit(cat,id){
+  const item=MENU[cat].find(i=>i.id===id);
+  if(!item)return;
+  adminEditId=id;adminEditCat=cat;
+  document.getElementById('adminModalTitle').textContent='Edit item';
+  document.getElementById('amName').value=item.name;
+  document.getElementById('amDesc').value=item.desc;
+  document.getElementById('amPrice').value=item.price.toFixed(2);
+  document.getElementById('amCat').value=cat;
+  document.getElementById('amDelete').style.display='block';
+  document.getElementById('adminModal').classList.add('active');
+}
+
+function saveAdminItem(){
+  const name=document.getElementById('amName').value.trim();
+  const desc=document.getElementById('amDesc').value.trim();
+  const price=parseFloat(document.getElementById('amPrice').value);
+  const cat=document.getElementById('amCat').value;
+  if(!name||isNaN(price))return;
+  if(adminEditId){
+    // Edit existing
+    const item=MENU[adminEditCat].find(i=>i.id===adminEditId);
+    if(item){item.name=name;item.desc=desc;item.price=price;}
+    // Move category if changed
+    if(cat!==adminEditCat){
+      MENU[adminEditCat]=MENU[adminEditCat].filter(i=>i.id!==adminEditId);
+      MENU[cat].push({...item,id:adminEditId});
+    }
+  } else {
+    const newId=Date.now();
+    MENU[cat].push({id:newId,name,desc,price});
+  }
+  closeAdminModal();
+  renderAdmin();
+}
+
+function deleteAdminItem(){
+  if(!adminEditId)return;
+  MENU[adminEditCat]=MENU[adminEditCat].filter(i=>i.id!==adminEditId);
+  closeAdminModal();
+  renderAdmin();
+}
+
+function closeAdminModal(){
+  document.getElementById('adminModal').classList.remove('active');
+  adminEditId=null;adminEditCat=null;
 }
 selectPay('now');
 </script>
