@@ -516,7 +516,7 @@ async function pushOrderToKitchen(order) {
 
 async function fetchKitchenOrders() {
   try {
-    const data = await sbFetch('GET', "/rest/v1/demo_orders?demo=eq.launchserve&status=neq.done&order=created_at.asc&select=*", null);
+    const data = await sbFetch('GET', "/rest/v1/demo_orders?demo=eq.launchserve&order=created_at.asc&select=*", null);
     return data || [];
   } catch(e) { return []; }
 }
@@ -588,11 +588,7 @@ const MENU = {
   ]
 };
 
-const ORDERS=[
-  {id:'A47',table:3,time:'2m ago',items:[{n:'Full English Breakfast',q:1},{n:'Hot Drink and Pastry',q:2}],total:17.00,pay:'paid',note:'',status:'active'},
-  {id:'A48',table:7,time:'4m ago',items:[{n:'Cheese Toastie',q:1},{n:'Prawn Jacket',q:1},{n:'Kids Chicken Bites',q:1}],total:20.00,pay:'counter',note:'Extra butter please',status:'active'},
-  {id:'A49',table:1,time:'8m ago',items:[{n:'Afternoon Tea',q:2}],total:20.00,pay:'paid',note:'',status:'ready'},
-];
+const ORDERS=[];  // Real orders come from Supabase
 
 let tableNum='',basket=[],selectedPay='now',curItem=null,curQty=1,curCat='Breakfast',curChoices=[];
 let adminEditId=null,adminEditCat=null,nextId=100;
@@ -764,20 +760,29 @@ function placeOrder(){
 function resetCustomer(){basket=[];tableNum='';document.getElementById('tableInput').value='';showView('tableView');}
 
 async function renderKitchenFromDB(){
-  const rows = await fetchKitchenOrders();
-  const grid=document.getElementById('kitchenGrid');
-  if(!rows.length){
-    document.getElementById('orderCount').textContent='0 ACTIVE';
-    grid.innerHTML='<div style="color:#555;padding:40px;text-align:center;font-size:0.85rem;grid-column:1/-1">No active orders</div>';
-    return;
+  try {
+    const rows = await fetchKitchenOrders();
+    const grid=document.getElementById('kitchenGrid');
+    if(!rows || !rows.length){
+      document.getElementById('orderCount').textContent='0 ACTIVE';
+      grid.innerHTML='<div style="color:#555;padding:40px;text-align:center;font-size:0.85rem;grid-column:1/-1">No active orders</div>';
+      return;
+    }
+    const active=rows.filter(o=>o.status==='active').length;
+    document.getElementById('orderCount').textContent=active+' ACTIVE';
+    grid.innerHTML='';
+    rows.forEach(o=>{
+      // Parse items - Supabase jsonb can return as string or object
+      let items = o.items;
+      if(typeof items === 'string'){try{items=JSON.parse(items);}catch(e){items=[];}}
+      if(!Array.isArray(items)) items=[];
+      const ord={id:o.id,table:o.table_num,time:new Date(o.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),items,total:parseFloat(o.total)||0,pay:o.payment,note:o.note||'',status:o.status};
+      renderOrderCard(grid, ord);
+    });
+  } catch(e) {
+    console.error('Kitchen render error:', e);
+    document.getElementById('kitchenGrid').innerHTML='<div style="color:#f05252;padding:40px;text-align:center;grid-column:1/-1">Error loading orders — retrying…</div>';
   }
-  const active=rows.filter(o=>o.status==='active').length;
-  document.getElementById('orderCount').textContent=active+' ACTIVE';
-  grid.innerHTML='';
-  rows.forEach(o=>{
-    const ord={id:o.id,table:o.table_num,time:new Date(o.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),items:o.items,total:o.total,pay:o.payment,note:o.note||'',status:o.status};
-    renderOrderCard(grid, ord);
-  });
 }
 
 function renderKitchen(){
