@@ -678,6 +678,18 @@ function removeItem(uid){basket=basket.filter(i=>i.uid!==uid);updateCount();}
 function selectPay(t){selectedPay=t;document.getElementById('payNowOpt').classList.toggle('selected',t==='now');document.getElementById('payCounterOpt').classList.toggle('selected',t==='counter');}
 function placeOrder(){
   const ref='A'+Math.floor(Math.random()*900+100);document.getElementById('orderRef').textContent=ref;
+  // Push order to kitchen display
+  const newOrder = {
+    id: ref,
+    table: tableNum,
+    time: 'just now',
+    items: basket.map(i => ({n: i.name + (i.note ? ' ('+i.note+')' : ''), q: i.qty})),
+    total: basket.reduce((s,i) => s + i.price*i.qty, 0),
+    pay: selectedPay === 'now' ? 'paid' : 'counter',
+    note: '',
+    status: 'active'
+  };
+  ORDERS.unshift(newOrder);
   if(selectedPay==='counter'){
     document.getElementById('confirmTitle').textContent='Order sent';
     document.getElementById('confirmSub').textContent='Your order is confirmed. Come up to pay when you\'re ready.';
