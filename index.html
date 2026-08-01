@@ -952,7 +952,13 @@ async function loadAdminTab(tab){
       const itemsDiv=document.createElement('div');
       catData.items.forEach(item=>{
         const div=document.createElement('div');div.className='admin-item';
-        div.innerHTML='<div class="ai-info" onclick="openAmModal(''+cat+'','+item.id+')"><div class="ai-name">'+item.name+'</div>'+(item.desc?'<div class="ai-sub">'+item.desc.substring(0,50)+'</div>':'')+'</div><div class="ai-price">£'+item.price.toFixed(2)+'</div><button class="ai-tog'+(item.available===false?' off':'')+'" onclick="toggleItem(''+cat+'','+item.id+',this);event.stopPropagation()"></button>';
+        const info=document.createElement('div');info.className='ai-info';
+        info.innerHTML='<div class="ai-name">'+item.name+'</div>'+(item.desc?'<div class="ai-sub">'+item.desc.substring(0,50)+'</div>':'');
+        info.onclick=()=>openAmModal(cat,item.id);
+        const price=document.createElement('div');price.className='ai-price';price.textContent='\u00a3'+item.price.toFixed(2);
+        const tog=document.createElement('button');tog.className='ai-tog'+(item.available===false?' off':'');
+        tog.onclick=(e)=>{e.stopPropagation();toggleItem(cat,item.id,tog);};
+        div.appendChild(info);div.appendChild(price);div.appendChild(tog);
         itemsDiv.appendChild(div);
       });
       const addBtn=document.createElement('button');addBtn.className='admin-add';addBtn.textContent='+ Add item';addBtn.onclick=()=>openAmModal(cat,null);
