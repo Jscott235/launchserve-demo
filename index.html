@@ -807,8 +807,15 @@ function loadStation(station){
   const statusField=station==='kitchen'?'food_status':'drink_status';
   const itemsField=station==='kitchen'?'food_items':'drink_items';
 
+  const seenIds=new Set();
+  let firstLoad=true;
   async function render(){
     const data=await sbq('GET','/rest/v1/ls_orders?venue=eq.'+VENUE+'&'+statusField+'=in.(active,ready)&order=created_at.asc&select=*',null)||[];
+    if(!firstLoad){
+      data.forEach(o=>{if(!seenIds.has(o.id))playChime();});
+    }
+    firstLoad=false;
+    data.forEach(o=>seenIds.add(o.id));
     const grid=document.getElementById(gridId);
     // clear old timers
     Object.keys(timers).forEach(k=>{clearInterval(timers[k]);delete timers[k];});
