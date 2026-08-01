@@ -819,11 +819,15 @@ function loadStation(station){
     badge.textContent=active+' ACTIVE';
     badge.className='st-badge'+(active===0?' zero':'');
 
-    // Avg wait
-    const completed=await sbq('GET','/rest/v1/ls_orders?venue=eq.'+VENUE+'&'+statusField+'=eq.none&created_at=gte='+new Date(Date.now()-2*60*60*1000).toISOString()+'&select=created_at,'+itemsField+',food_ready_at,drink_ready_at',null)||[];
-    const readyField=station==='kitchen'?'food_ready_at':'drink_ready_at';
-    const times=completed.filter(o=>o[readyField]).map(o=>(new Date(o[readyField])-new Date(o.created_at))/60000);
-    document.getElementById(waitId).textContent=times.length?Math.round(times.reduce((a,b)=>a+b)/times.length)+'m avg':'—';
+    // Avg wait — wrapped so it never blocks card rendering
+    try{
+      const since=new Date(Date.now()-2*60*60*1000).toISOString();
+      const completed=await sbq('GET','/rest/v1/ls_orders?venue=eq.'+VENUE+'&'+statusField+'=eq.none&created_at=gte.'+since+'&select=created_at,food_ready_at,drink_ready_at',null)||[];
+      const readyField=station==='kitchen'?'food_ready_at':'drink_ready_at';
+      const arr=Array.isArray(completed)?completed:[];
+      const times=arr.filter(o=>o[readyField]).map(o=>(new Date(o[readyField])-new Date(o.created_at))/60000);
+      document.getElementById(waitId).textContent=times.length?Math.round(times.reduce((a,b)=>a+b)/times.length)+'m avg':'—';
+    }catch(e){document.getElementById(waitId).textContent='—';}
 
     if(!data.length){grid.innerHTML='<div class="st-empty">No active orders</div>';return;}
 
