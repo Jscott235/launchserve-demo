@@ -742,6 +742,15 @@ function deleteAdminItem(){
   renderAdmin();renderMenu();
 }
 selectPay('now');
+
+// Auto-route: if installed PWA or accessed directly (not demo portal), go straight to ordering
+window.addEventListener('DOMContentLoaded', () => {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  const isDemoPortal = window.location.hostname === 'demo.launchpadme.co.uk';
+  if(isStandalone || !isDemoPortal){
+    showCustomer();
+  }
+});
 </script>
 <script>
 if('serviceWorker' in navigator){
