@@ -125,6 +125,17 @@ input,select,textarea{font-size:16px;font-family:'DM Sans',system-ui,sans-serif}
 .note-label{font-size:0.78rem;color:var(--muted);margin-bottom:8px}
 .note-input{width:100%;height:80px;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:16px;background:var(--bg2);color:var(--text);resize:none;outline:none;transition:border-color .15s}
 .note-input:focus{border-color:var(--accent)}
+
+/* ── CHOICES ── */
+.choices-section{margin-bottom:20px}
+.choices-label{font-size:0.78rem;font-weight:600;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.choices-required{font-size:0.62rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
+.choices-optional{font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+.choices-grid{display:flex;flex-wrap:wrap;gap:8px}
+.choice-btn{padding:8px 16px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:0.8rem;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;font-family:'DM Sans',system-ui,sans-serif;line-height:1.2}
+.choice-btn:active{opacity:.8}
+.choice-btn.selected{background:var(--accent);color:#fff;border-color:var(--accent)}
+
 .im-footer{padding:16px 20px;padding-bottom:calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--bg)}
 @media(min-width:768px){#itemModal{inset:auto;top:50%;left:50%;transform:translate(-50%,-50%);max-width:460px;width:90%;max-height:90vh;border-radius:12px;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,0.15)}}
 
@@ -372,6 +383,7 @@ input,select,textarea{font-size:16px;font-family:'DM Sans',system-ui,sans-serif}
     <div class="im-name" id="imName"></div>
     <div class="im-desc" id="imDesc"></div>
     <div class="im-price" id="imPrice"></div>
+    <div id="imChoices"></div>
     <div class="qty-row">
       <div class="qty-label">Quantity</div>
       <div class="qty-ctrl">
@@ -453,8 +465,8 @@ const MENU = {
     {id:11,name:'Breakfast Ciabatta',desc:'2 Bacon, Sausage and Egg on toasted Ciabatta bread',price:6.00,food:true},
   ],
   'Deals @ The Cup': [
-    {id:20,name:'Hot Drink and Pastry',desc:'Any hot drink with a Scone, Teacake or Pastry',price:5.00,food:false},
-    {id:21,name:'Posh Cake and Hot Drink',desc:'Any hot drink and premium cake from the cake stand',price:6.00,food:false},
+    {id:20,name:'Hot Drink and Pastry',desc:'Any hot drink with a Scone, Teacake or Pastry',price:5.00,food:false,choices:[{name:'Choose your hot drink',required:true,options:['Flat White','Cappuccino','Latte','Americano','Hot Chocolate','English Breakfast Tea','Herbal Tea']},{name:'Choose your pastry',required:true,options:['Scone','Teacake','Pastry']}]},
+    {id:21,name:'Posh Cake and Hot Drink',desc:'Any hot drink and premium cake from the cake stand',price:6.00,food:false,choices:[{name:'Choose your hot drink',required:true,options:['Flat White','Cappuccino','Latte','Americano','Hot Chocolate','English Breakfast Tea','Herbal Tea']}]},
     {id:22,name:'Afternoon Tea',desc:'Sandwiches, quiche, scone and cake including hot drinks',price:10.00,food:true},
     {id:23,name:'Burger Afternoon Tea',desc:'Burger, home cooked chips, salad, milkshakes and cake',price:10.00,food:true},
     {id:24,name:'Sunday Carvery',desc:'3 meats with all the trimmings. Add a dessert for £3',price:10.00,food:true},
@@ -462,24 +474,24 @@ const MENU = {
     {id:26,name:'Buffet — Child (under 12)',desc:'Freshly made, big variety, something for everyone',price:5.00,food:false},
   ],
   'Sandwiches': [
-    {id:30,name:'Chicken Club Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread: White Bloomer, Brown Bloomer, Baguette, Ciabatta or Panini',price:8.00,food:true},
-    {id:31,name:'Prawn Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread: White Bloomer, Brown Bloomer, Baguette, Ciabatta or Panini',price:7.00,food:true},
-    {id:32,name:'Corned Beef Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread.',price:7.00,food:true},
-    {id:33,name:'Home Cooked Ham Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread.',price:7.00,food:true},
-    {id:34,name:'Tuna Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread.',price:7.00,food:true},
-    {id:35,name:'Cheese Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread.',price:6.00,food:true},
+    {id:30,name:'Chicken Club Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread: White Bloomer, Brown Bloomer, Baguette, Ciabatta or Panini',price:8.00,food:true,choices:[{name:'Choose your bread',required:true,options:['White Bloomer','Brown Bloomer','Baguette','Ciabatta','Panini']},{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
+    {id:31,name:'Prawn Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread: White Bloomer, Brown Bloomer, Baguette, Ciabatta or Panini',price:7.00,food:true,choices:[{name:'Choose your bread',required:true,options:['White Bloomer','Brown Bloomer','Baguette','Ciabatta','Panini']},{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
+    {id:32,name:'Corned Beef Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread.',price:7.00,food:true,choices:[{name:'Choose your bread',required:true,options:['White Bloomer','Brown Bloomer','Baguette','Ciabatta','Panini']},{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
+    {id:33,name:'Home Cooked Ham Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread.',price:7.00,food:true,choices:[{name:'Choose your bread',required:true,options:['White Bloomer','Brown Bloomer','Baguette','Ciabatta','Panini']},{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
+    {id:34,name:'Tuna Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread.',price:7.00,food:true,choices:[{name:'Choose your bread',required:true,options:['White Bloomer','Brown Bloomer','Baguette','Ciabatta','Panini']},{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
+    {id:35,name:'Cheese Sandwich',desc:'Served with side salad and choice of home cooked chips or crisps. Choose your bread.',price:6.00,food:true,choices:[{name:'Choose your bread',required:true,options:['White Bloomer','Brown Bloomer','Baguette','Ciabatta','Panini']},{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
   ],
   'Toasties': [
-    {id:40,name:'Cheese Toastie',desc:'Served with a side salad on 50/50 bread',price:6.00,food:true},
-    {id:41,name:'Ham Toastie',desc:'Served with a side salad on 50/50 bread',price:7.00,food:true},
-    {id:42,name:'Corned Beef Toastie',desc:'Served with a side salad on 50/50 bread',price:7.00,food:true},
-    {id:43,name:'Tuna Toastie',desc:'Served with a side salad on 50/50 bread',price:7.00,food:true},
+    {id:40,name:'Cheese Toastie',desc:'Served with a side salad on 50/50 bread',price:6.00,food:true,choices:[{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
+    {id:41,name:'Ham Toastie',desc:'Served with a side salad on 50/50 bread',price:7.00,food:true,choices:[{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
+    {id:42,name:'Corned Beef Toastie',desc:'Served with a side salad on 50/50 bread',price:7.00,food:true,choices:[{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
+    {id:43,name:'Tuna Toastie',desc:'Served with a side salad on 50/50 bread',price:7.00,food:true,choices:[{name:'Choose your side',required:true,options:['Home Cooked Chips','Crisps']}]},
   ],
   'Jacket Potatoes': [
     {id:50,name:'Cheese Jacket',desc:'Served with a side salad',price:6.00,food:false},
     {id:51,name:'Cheese and Beans Jacket',desc:'Served with a side salad',price:7.00,food:false},
-    {id:52,name:'Homemade Chilli Jacket',desc:'Served with a side salad. Add cheese for £1',price:7.00,food:true},
-    {id:53,name:'Tuna Jacket',desc:'Served with a side salad. Add cheese for £1',price:7.00,food:true},
+    {id:52,name:'Homemade Chilli Jacket',desc:'Served with a side salad. Add cheese for £1',price:7.00,food:true,choices:[{name:'Add cheese? (+£1.00)',required:false,options:['No thanks','Yes please (+£1.00)']}]},
+    {id:53,name:'Tuna Jacket',desc:'Served with a side salad. Add cheese for £1',price:7.00,food:true,choices:[{name:'Add cheese? (+£1.00)',required:false,options:['No thanks','Yes please (+£1.00)']}]},
     {id:54,name:'Prawn Jacket',desc:'Served with a side salad',price:8.00,food:false},
   ],
   "Kids' Menu": [
@@ -497,7 +509,7 @@ const ORDERS=[
   {id:'A49',table:1,time:'8m ago',items:[{n:'Afternoon Tea',q:2}],total:20.00,pay:'paid',note:'',status:'ready'},
 ];
 
-let tableNum='',basket=[],selectedPay='now',curItem=null,curQty=1,curCat='Breakfast';
+let tableNum='',basket=[],selectedPay='now',curItem=null,curQty=1,curCat='Breakfast',curChoices=[];
 let adminEditId=null,adminEditCat=null,nextId=100;
 
 function showScreen(id){
@@ -545,7 +557,7 @@ function renderMenu(){
   const list=document.getElementById('menuList');list.innerHTML='';
   MENU[curCat].forEach(item=>{
     const div=document.createElement('div');div.className='menu-item';
-    const handler=item.food?'openItem('+item.id+',event)':'quickAdd('+item.id+',event)';
+    const handler=(item.food||item.choices)?'openItem('+item.id+',event)':'quickAdd('+item.id+',event)';
     div.innerHTML='<div class="item-info"><div class="item-name">'+item.name+'</div>'+(item.desc?'<div class="item-desc">'+item.desc+'</div>':'')+'<div class="item-price">£'+item.price.toFixed(2)+'</div></div><button class="item-add-btn" onclick="'+handler+'">+</button>';
     list.appendChild(div);
   });
@@ -570,10 +582,47 @@ function openItem(id,e){
   document.getElementById('qtyVal').textContent=1;
   document.getElementById('imTotal').textContent='£'+item.price.toFixed(2);
   document.getElementById('itemNote').value='';
+  // Render choices
+  const choicesDiv=document.getElementById('imChoices');choicesDiv.innerHTML='';curChoices=[];
+  if(item.choices){
+    item.choices.forEach((choice,ci)=>{
+      curChoices.push(null);
+      const sec=document.createElement('div');sec.className='choices-section';
+      const lbl=document.createElement('div');lbl.className='choices-label';
+      lbl.innerHTML=choice.name+(choice.required?'<span class="choices-required">Required</span>':'<span class="choices-optional">Optional</span>');
+      sec.appendChild(lbl);
+      const grid=document.createElement('div');grid.className='choices-grid';
+      choice.options.forEach((opt)=>{
+        const btn=document.createElement('button');btn.className='choice-btn';btn.textContent=opt;
+        btn.onclick=()=>{curChoices[ci]=opt;sec.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');};
+        grid.appendChild(btn);
+      });
+      sec.appendChild(grid);choicesDiv.appendChild(sec);
+    });
+  }
   document.getElementById('itemModal').classList.add('active');
 }
 function changeQty(d){curQty=Math.max(1,curQty+d);document.getElementById('qtyVal').textContent=curQty;document.getElementById('imTotal').textContent='£'+(curItem.price*curQty).toFixed(2);}
-function addToBasket(){basket.push({...curItem,qty:curQty,note:document.getElementById('itemNote').value.trim(),uid:Date.now()});document.getElementById('itemModal').classList.remove('active');updateCount();}
+function addToBasket(){
+  // Validate required choices
+  if(curItem.choices){
+    for(let i=0;i<curItem.choices.length;i++){
+      if(curItem.choices[i].required&&curChoices[i]===null){
+        alert('Please select: '+curItem.choices[i].name);return;
+      }
+    }
+  }
+  // Build note from choices + user note
+  let choiceNote='';
+  if(curItem.choices){choiceNote=curItem.choices.map((c,i)=>curChoices[i]?c.name+': '+curChoices[i]:null).filter(Boolean).join(' · ');}
+  const userNote=document.getElementById('itemNote').value.trim();
+  const note=[choiceNote,userNote].filter(Boolean).join(' · ');
+  // Handle cheese add-on price
+  let extraPrice=0;
+  if(curItem.choices){curItem.choices.forEach((c,i)=>{if(curChoices[i]&&curChoices[i].includes('+£'))extraPrice+=parseFloat(curChoices[i].match(/\+£([\d.]+)/)[1]);});}
+  basket.push({...curItem,price:curItem.price+extraPrice,qty:curQty,note,uid:Date.now()});
+  document.getElementById('itemModal').classList.remove('active');updateCount();
+}
 function updateCount(){
   const t=basket.reduce((s,i)=>s+i.qty,0);
   const c=document.getElementById('basketCount');c.textContent=t;c.style.display=t>0?'flex':'none';renderBasket();
