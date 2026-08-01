@@ -768,7 +768,8 @@ function deleteAdminItem(){
 }
 
 // ── ORDER NOTIFICATIONS ──
-const PUSH_ENDPOINT = 'https://dc-orders.jscott55124.workers.dev';
+const SB_URL = 'https://coiwwbroycaznkmhevde.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvaXd3YnJveWNhem5rbWhldmRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NzIwMjksImV4cCI6MjA5OTU0ODAyOX0.r-k8RjKqouqjekvEXSMKzJykKbtgpGLMZQXcXhAmRW8';
 let pollingInterval = null;
 let currentOrderId = null;
 let notifGranted = false;
@@ -807,11 +808,19 @@ async function fireNotification(orderId, tableNum){
 function startPolling(orderId, tableNum){
   currentOrderId = orderId;
   if(pollingInterval) clearInterval(pollingInterval);
+  // First, insert the order as pending
+  fetch(`${SB_URL}/rest/v1/demo_orders`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'resolution=merge-duplicates'},
+    body: JSON.stringify({id:orderId, status:'pending', table_num:String(tableNum)})
+  }).catch(()=>{});
   pollingInterval = setInterval(async () => {
     try{
-      const r = await fetch(`${PUSH_ENDPOINT}/order?id=${orderId}`);
-      const d = await r.json();
-      if(d.status === 'ready'){
+      const r = await fetch(`${SB_URL}/rest/v1/demo_orders?id=eq.${orderId}&select=status`, {
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+      });
+      const rows = await r.json();
+      if(rows.length && rows[0].status === 'ready'){
         clearInterval(pollingInterval);
         fireNotification(orderId, tableNum);
       }
@@ -821,10 +830,10 @@ function startPolling(orderId, tableNum){
 
 async function updateOrderStatus(orderId, status){
   try{
-    await fetch(`${PUSH_ENDPOINT}/order`, {
+    await fetch(`${SB_URL}/rest/v1/demo_orders`, {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({id:orderId, status})
+      headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'resolution=merge-duplicates'},
+      body: JSON.stringify({id:orderId, status, updated_at: new Date().toISOString()})
     });
   } catch(e){}
 }
