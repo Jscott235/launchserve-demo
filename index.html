@@ -369,7 +369,7 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
       </div>
       <div class="pay-opt" id="payCounter" onclick="selPay('counter')">
         <div class="po-top"><div class="po-radio"></div><div class="po-name">Pay at counter</div></div>
-        <div class="po-desc">We'll send your order to the kitchen. Pay when you're ready.</div>
+        <div class="po-desc">We'll send your order to the kitchen. Pay when you\'re ready.</div>
       </div>
     </div>
     <div class="pay-foot">
@@ -381,7 +381,7 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
   <div id="confirmView">
     <div class="cv-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
     <div class="cv-title" id="cvTitle">Order placed</div>
-    <div class="cv-sub" id="cvSub">Your order is with us. We'll bring it to your table shortly.</div>
+    <div class="cv-sub" id="cvSub">Your order is with us. We\'ll bring it to your table shortly.</div>
     <div class="cv-table"><div class="cv-tl">Table</div><div class="cv-tv" id="cvTable">—</div></div>
     <button class="btn-new" onclick="resetCustomer()">New order</button>
   </div>
@@ -531,7 +531,7 @@ const CATS={
     {id:40,name:'Iced Latte',desc:'Cold brew espresso over ice',price:4.20},
     {id:41,name:'Lemonade',desc:'Fresh pressed, lightly sparkling',price:3.00},
     {id:42,name:'Still Water',desc:'500ml bottle',price:1.80},
-    {id:43,name:'Milkshake',desc:'Ask your server for today's flavours',price:4.50},
+    {id:43,name:'Milkshake',desc:'Ask your server for today\'s flavours',price:4.50},
   ]},
   'Sandwiches':{type:'food',items:[
     {id:50,name:'Chicken Club Sandwich',desc:'Served with side salad',price:8.00,choices:[{name:'Choose your bread',req:true,opts:['White Bloomer','Brown Bloomer','Baguette','Ciabatta','Panini']},{name:'Choose your side',req:true,opts:['Home Cooked Chips','Crisps']}]},
@@ -780,10 +780,10 @@ async function placeOrder(){
   // Confirm screen
   if(selPay_==='counter'){
     document.getElementById('cvTitle').textContent='Order sent';
-    document.getElementById('cvSub').textContent='Your order is confirmed. Come up to pay when you're ready.';
+    document.getElementById('cvSub').textContent='Your order is confirmed. Come up to pay when you\'re ready.';
   }else{
     document.getElementById('cvTitle').textContent='Payment confirmed';
-    document.getElementById('cvSub').textContent='Your order is with us. We'll bring it to your table shortly.';
+    document.getElementById('cvSub').textContent='Your order is with us. We\'ll bring it to your table shortly.';
   }
   basket=[];updateCount();goView('confirmView');
 }
@@ -932,7 +932,7 @@ async function loadAdminTab(tab){
     const active=data.filter(o=>o.status==='active').length;
     const fi=data.reduce((s,o)=>{let i=o.food_items;if(typeof i==='string')i=JSON.parse(i);return s+(Array.isArray(i)?i.length:0);},0);
     const di=data.reduce((s,o)=>{let i=o.drink_items;if(typeof i==='string')i=JSON.parse(i);return s+(Array.isArray(i)?i.length:0);},0);
-    body.innerHTML='<div class="admin-notice">Today's live data</div><div class="stat-grid"><div class="stat-card"><div class="sc-val">£'+rev.toFixed(2)+'</div><div class="sc-lbl">Revenue today</div></div><div class="stat-card"><div class="sc-val">'+data.length+'</div><div class="sc-lbl">Orders today</div></div><div class="stat-card"><div class="sc-val">'+active+'</div><div class="sc-lbl">Active now</div></div><div class="stat-card"><div class="sc-val">'+rev.toFixed(2)+'</div><div class="sc-lbl">Avg order £'+(data.length?((rev/data.length).toFixed(2)):'0')+'</div></div></div><div class="stat-grid"><div class="stat-card"><div class="sc-val">'+fi+'</div><div class="sc-lbl">Food items today</div></div><div class="stat-card"><div class="sc-val">'+di+'</div><div class="sc-lbl">Drink items today</div></div></div>';
+    body.innerHTML='<div class="admin-notice">Today\'s live data</div><div class="stat-grid"><div class="stat-card"><div class="sc-val">£'+rev.toFixed(2)+'</div><div class="sc-lbl">Revenue today</div></div><div class="stat-card"><div class="sc-val">'+data.length+'</div><div class="sc-lbl">Orders today</div></div><div class="stat-card"><div class="sc-val">'+active+'</div><div class="sc-lbl">Active now</div></div><div class="stat-card"><div class="sc-val">'+rev.toFixed(2)+'</div><div class="sc-lbl">Avg order £'+(data.length?((rev/data.length).toFixed(2)):'0')+'</div></div></div><div class="stat-grid"><div class="stat-card"><div class="sc-val">'+fi+'</div><div class="sc-lbl">Food items today</div></div><div class="stat-card"><div class="sc-val">'+di+'</div><div class="sc-lbl">Drink items today</div></div></div>';
   }else if(tab==='orders'){
     const data=await sbq('GET','/rest/v1/ls_orders?venue=eq.'+VENUE+'&order=created_at.desc&limit=50&select=*',null)||[];
     body.innerHTML='';
