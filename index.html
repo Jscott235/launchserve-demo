@@ -145,6 +145,19 @@ input,select,textarea{font-size:16px;font-family:'DM Sans',system-ui,sans-serif}
 .choice-btn:active{opacity:.8}
 .choice-btn.selected{background:var(--accent);color:#fff;border-color:var(--accent)}
 
+
+/* ── INSTALL BANNER ── */
+#installBanner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:998;background:#FAF6F0;border-top:2px solid #C4973A;padding:16px 20px;padding-bottom:calc(16px + env(safe-area-inset-bottom));box-shadow:0 -4px 24px rgba(61,26,110,0.15)}
+#installBanner.show{display:block}
+.ib-inner{max-width:480px;margin:0 auto}
+.ib-title{font-size:0.88rem;font-weight:700;color:#2D1155;margin-bottom:3px}
+.ib-sub{font-size:0.75rem;color:#9070A0;margin-bottom:12px}
+.ib-steps{display:flex;align-items:center;gap:10px;font-size:0.78rem;color:#4A2080;margin-bottom:14px;background:#F0E8DC;border-radius:8px;padding:10px 12px}
+.ib-steps svg{flex-shrink:0;width:18px;height:18px;stroke:#C4973A;fill:none;stroke-width:2}
+.ib-actions{display:flex;gap:10px}
+.ib-install{flex:1;height:44px;background:#3D1A6E;color:#fff;border:none;border-radius:8px;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
+.ib-dismiss{height:44px;padding:0 16px;background:none;color:#9070A0;border:1.5px solid #DDD0BC;border-radius:8px;font-size:0.82rem;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
+
 .im-footer{padding:16px 20px;padding-bottom:calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--bg)}
 @media(min-width:768px){#itemModal{inset:auto;top:50%;left:50%;transform:translate(-50%,-50%);max-width:460px;width:90%;max-height:90vh;border-radius:12px;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,0.15)}}
 
@@ -743,17 +756,78 @@ function deleteAdminItem(){
 }
 selectPay('now');
 
+
+// Install banner
+let deferredInstall = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredInstall = e;
+  if(document.getElementById('installBanner').classList.contains('show')){
+    document.getElementById('ib-android').style.display='block';
+  }
+});
+function triggerInstall(){
+  if(deferredInstall){
+    deferredInstall.prompt();
+    deferredInstall.userChoice.then(r => {
+      if(r.outcome==='accepted') dismissBanner();
+      deferredInstall = null;
+    });
+  }
+}
+function dismissBanner(){ document.getElementById('installBanner').classList.remove('show'); }
+function showInstallBanner(){
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || !!window.navigator.standalone;
+  if(isStandalone) return;
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+  const banner = document.getElementById('installBanner');
+  banner.classList.add('show');
+  if(isIOS && isSafari){ document.getElementById('ib-ios').style.display='block'; }
+  else if(deferredInstall){ document.getElementById('ib-android').style.display='block'; }
+  else { document.getElementById('ib-fallback').style.display='block'; }
+}
+
 // Route immediately — script is at end of body so DOM is ready
 (function(){
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || !!window.navigator.standalone;
   const isDemoPortal = window.location.hostname === 'demo.launchpadme.co.uk';
-  if(isStandalone || !isDemoPortal){
+  const params = new URLSearchParams(window.location.search);
+  if(isStandalone){
     showCustomer();
-  } else {
+  } else if(isDemoPortal){
     showScreen('roleScreen');
+  } else {
+    showCustomer();
+    if(params.get('install')==='1'){ setTimeout(showInstallBanner, 800); }
   }
 })();
 </script>
+
+<!-- INSTALL BANNER -->
+<div id="installBanner">
+  <div class="ib-inner">
+    <div class="ib-title">Add The Dancing Cup to your homescreen</div>
+    <div class="ib-sub">Order from your table in seconds — no app store needed</div>
+    <div id="ib-ios" style="display:none">
+      <div class="ib-steps">
+        <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        Tap <strong>&nbsp;Share&nbsp;</strong> then <strong>&nbsp;"Add to Home Screen"</strong>
+      </div>
+    </div>
+    <div id="ib-android" style="display:none">
+      <div class="ib-actions">
+        <button class="ib-install" onclick="triggerInstall()">Add to Home Screen</button>
+        <button class="ib-dismiss" onclick="dismissBanner()">Later</button>
+      </div>
+    </div>
+    <div id="ib-fallback" style="display:none">
+      <div class="ib-steps">Use your browser menu to add this page to your home screen</div>
+      <div class="ib-actions"><button class="ib-dismiss" onclick="dismissBanner()" style="flex:1">Got it</button></div>
+    </div>
+  </div>
+</div>
+
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
