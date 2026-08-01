@@ -290,6 +290,21 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
 .rb-title{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:2px}
 .rb-sub{font-size:.82rem;color:rgba(255,255,255,.85)}
 
+
+/* ── RECENTLY CLEARED ── */
+.cleared-tray{background:var(--dk2);border-top:1px solid var(--dkb);padding:10px 14px}
+.ct-label{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dkm);margin-bottom:8px}
+.ct-items{display:flex;flex-direction:column;gap:6px}
+.ct-item{background:var(--dk1);border:1px solid var(--dkb);border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:10px}
+.ct-info{flex:1;font-size:.78rem;color:var(--dkm)}
+.ct-info strong{color:var(--dkt)}
+.ct-restore{height:32px;padding:0 12px;background:none;border:1px solid var(--dkb);border-radius:4px;font-size:.72rem;font-weight:600;color:var(--gold);cursor:pointer;min-height:32px}
+.ct-restore:active{opacity:.7}
+/* ── REFUND BADGE ── */
+.oh-status.refunded{background:var(--red-d);color:var(--red)}
+.btn-refund{height:32px;padding:0 12px;background:none;border:1px solid rgba(217,48,37,.3);border-radius:4px;font-size:.72rem;font-weight:600;color:var(--red);cursor:pointer;margin-left:8px;min-height:32px}
+.btn-refund:active{opacity:.7}
+
 /* ── UTIL BUTTONS ── */
 .btn-full{width:100%;height:52px;background:var(--p);color:#fff;border:none;border-radius:8px;font-size:.92rem;font-weight:600;min-height:44px}
 .btn-full:active{opacity:.8}
@@ -421,6 +436,10 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
   </div>
   <div class="wait-bar"><div class="wb-st">Avg food wait: <strong id="kWait">—</strong></div></div>
   <div class="st-grid" id="kGrid"><div class="st-empty">No food orders yet</div></div>
+  <div class="cleared-tray" id="kClearedTray" style="display:none">
+    <div class="ct-label">Recently cleared</div>
+    <div class="ct-items" id="kClearedItems"></div>
+  </div>
 </div>
 
 <!-- BAR -->
@@ -434,6 +453,10 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
   </div>
   <div class="wait-bar"><div class="wb-st">Avg drink wait: <strong id="bWait">—</strong></div></div>
   <div class="st-grid" id="bGrid"><div class="st-empty">No drink orders yet</div></div>
+  <div class="cleared-tray" id="bClearedTray" style="display:none">
+    <div class="ct-label">Recently cleared</div>
+    <div class="ct-items" id="bClearedItems"></div>
+  </div>
 </div>
 
 <!-- ADMIN -->
@@ -989,26 +1012,65 @@ function loadStation(station){
   stChannel=setInterval(()=>render(),4000);
 }
 
+const recentlyCleared={kitchen:[],bar:[]};
+
 async function markStation(orderId,station,newStatus){
   const statusField=station==='kitchen'?'food_status':'drink_status';
   const readyField=station==='kitchen'?'food_ready_at':'drink_ready_at';
   const update={};
   update[statusField]=newStatus==='done'?'none':'ready';
   if(newStatus==='ready')update[readyField]=new Date().toISOString();
-  
-  // If both food and drink done, mark order completed
+
   if(newStatus==='done'){
-    const order=await sbq('GET','/rest/v1/ls_orders?id=eq.'+orderId+'&select=food_status,drink_status',null);
+    // Store in recently cleared before marking done
+    const order=await sbq('GET','/rest/v1/ls_orders?id=eq.'+orderId+'&select=*',null);
     if(order&&order[0]){
+      recentlyCleared[station].unshift({...order[0],clearedAt:Date.now()});
+      recentlyCleared[station]=recentlyCleared[station].slice(0,5);
       const other=station==='kitchen'?order[0].drink_status:order[0].food_status;
-      if(other==='none'||other==='ready'){update.status='completed';update.completed_at=new Date().toISOString();}
+      if(other==='none'||other==='ready'||other==='completed'){update.status='completed';update.completed_at=new Date().toISOString();}
     }
   }
   await sbq('PATCH','/rest/v1/ls_orders?id=eq.'+orderId,update);
   loadStation(station);
+  renderClearedTray(station);
+}
+
+async function restoreOrder(orderId,station){
+  const statusField=station==='kitchen'?'food_status':'drink_status';
+  const update={status:'active'};
+  update[statusField]='active';
+  await sbq('PATCH','/rest/v1/ls_orders?id=eq.'+orderId,update);
+  recentlyCleared[station]=recentlyCleared[station].filter(o=>o.id!==orderId);
+  loadStation(station);
+  renderClearedTray(station);
+}
+
+function renderClearedTray(station){
+  const trayId=station==='kitchen'?'kClearedTray':'bClearedTray';
+  const itemsId=station==='kitchen'?'kClearedItems':'bClearedItems';
+  const tray=document.getElementById(trayId);
+  const items=document.getElementById(itemsId);
+  const cleared=recentlyCleared[station].filter(o=>Date.now()-o.clearedAt<30*60*1000);
+  recentlyCleared[station]=cleared;
+  if(!cleared.length){tray.style.display='none';return;}
+  tray.style.display='block';
+  items.innerHTML='';
+  cleared.forEach(o=>{
+    const div=document.createElement('div');div.className='ct-item';
+    const minsAgo=Math.floor((Date.now()-o.clearedAt)/60000);
+    div.innerHTML='<div class="ct-info"><strong>Table '+o.table_num+' #'+o.id+'</strong> — cleared '+( minsAgo<1?'just now':minsAgo+'m ago')+'</div><button class="ct-restore" onclick="restoreOrder(\''+o.id+'\',\''+station+'\')">Restore</button>';
+    items.appendChild(div);
+  });
 }
 
 /* ── ADMIN ── */
+async function refundOrder(orderId){
+  if(!confirm('Mark order #'+orderId+' as refunded?'))return;
+  await sbq('PATCH','/rest/v1/ls_orders?id=eq.'+orderId,{status:'refunded',completed_at:new Date().toISOString()});
+  loadAdminTab('orders');
+}
+
 function adminTab(tab){
   adminTab_=tab;
   document.querySelectorAll('.an-tab').forEach((t,i)=>{t.classList.toggle('on',['stats','orders','menu'][i]===tab);});
