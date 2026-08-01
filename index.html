@@ -282,6 +282,14 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
 .am-cancel{height:48px;padding:0 18px;background:var(--dk2);color:var(--dkm);border:1px solid var(--dkb);border-radius:8px;font-size:.88rem;font-weight:600;min-height:44px}
 .am-del{height:48px;padding:0 14px;background:none;color:var(--red);border:1px solid rgba(217,48,37,.3);border-radius:8px;font-size:.8rem;font-weight:600;min-height:44px}
 
+
+/* ── ORDER READY BANNER ── */
+#readyBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:900;background:var(--grn);padding:20px 24px;padding-top:calc(20px + env(safe-area-inset-top));text-align:center;animation:slideDown .3s ease}
+#readyBanner.on{display:block}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.rb-title{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:2px}
+.rb-sub{font-size:.82rem;color:rgba(255,255,255,.85)}
+
 /* ── UTIL BUTTONS ── */
 .btn-full{width:100%;height:52px;background:var(--p);color:#fff;border:none;border-radius:8px;font-size:.92rem;font-weight:600;min-height:44px}
 .btn-full:active{opacity:.8}
@@ -457,6 +465,12 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
       <button class="am-save" onclick="saveItem()">Save</button>
     </div>
   </div>
+</div>
+
+<!-- ORDER READY BANNER -->
+<div id="readyBanner">
+  <div class="rb-title">🍽 Your order is ready!</div>
+  <div class="rb-sub" id="rbSub">Come and collect or we'll bring it over shortly</div>
 </div>
 
 <!-- SWITCH BTN -->
@@ -792,9 +806,58 @@ async function placeOrder(){
     document.getElementById('cvSub').textContent='Your order is with us. We\'ll bring it to your table shortly.';
   }
   basket=[];updateCount();goView('confirmView');
+  startOrderReadyPoll(ref);
 }
 
-function resetCustomer(){tableNum='';document.getElementById('tableInput').value='';goView('tableView');loadWaitTimes();}
+let readyPollTimer=null;
+function startOrderReadyPoll(orderId){
+  if(readyPollTimer)clearInterval(readyPollTimer);
+  let foodNotified=false,drinkNotified=false;
+  readyPollTimer=setInterval(async()=>{
+    try{
+      const data=await sbq('GET','/rest/v1/ls_orders?id=eq.'+orderId+'&select=food_status,drink_status,food_items,drink_items',null);
+      if(!data||!data[0])return;
+      const o=data[0];
+      let fi=o.food_items;if(typeof fi==='string')try{fi=JSON.parse(fi);}catch(e){fi=[];}
+      let di=o.drink_items;if(typeof di==='string')try{di=JSON.parse(di);}catch(e){di=[];}
+      const hasFood=Array.isArray(fi)&&fi.length>0;
+      const hasDrink=Array.isArray(di)&&di.length>0;
+      const foodReady=!hasFood||(o.food_status==='ready'||o.food_status==='none');
+      const drinkReady=!hasDrink||(o.drink_status==='ready'||o.drink_status==='none');
+      // Notify when food ready
+      if(hasFood&&o.food_status==='ready'&&!foodNotified){
+        foodNotified=true;
+        showReadyBanner(hasDrink&&!drinkReady?'Your food is ready!':'Your order is ready!',hasDrink&&!drinkReady?'Your drinks are on their way':'Come and collect or we\'ll bring it over');
+        playChime();
+      }
+      // Notify when drinks ready
+      if(hasDrink&&(o.drink_status==='ready'||o.drink_status==='none')&&!drinkReady===false&&drinkReady&&!drinkNotified){
+        drinkNotified=true;
+        if(foodReady){
+          showReadyBanner('Everything is ready!','Come and collect or we\'ll bring it over');
+          playChime();
+        } else {
+          showReadyBanner('Your drinks are ready!','Food is still being prepared');
+          playChime();
+        }
+      }
+      // Stop polling when everything done
+      if(foodReady&&drinkReady&&(foodNotified||drinkNotified)){clearInterval(readyPollTimer);readyPollTimer=null;}
+    }catch(e){}
+  },5000);
+}
+function showReadyBanner(title,sub){
+  document.getElementById('readyBanner').classList.add('on');
+  document.querySelector('.rb-title').textContent=title;
+  document.getElementById('rbSub').textContent=sub;
+  setTimeout(()=>document.getElementById('readyBanner').classList.remove('on'),15000);
+}
+function resetCustomer(){
+  if(readyPollTimer){clearInterval(readyPollTimer);readyPollTimer=null;}
+  document.getElementById('readyBanner').classList.remove('on');
+  tableNum='';document.getElementById('tableInput').value='';
+  goView('tableView');loadWaitTimes();
+}
 
 /* ── STATION (KITCHEN / BAR) ── */
 let timers={};
