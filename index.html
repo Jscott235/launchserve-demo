@@ -806,10 +806,51 @@ async function placeOrder(){
     document.getElementById('cvSub').textContent='Your order is with us. We\'ll bring it to your table shortly.';
   }
   basket=[];updateCount();goView('confirmView');
-  startOrderReadyPoll(ref);
+  // Request notification permission then start polling
+  requestNotifPermission().then(()=>startOrderReadyPoll(ref));
 }
 
 let readyPollTimer=null;
+
+async function requestNotifPermission(){
+  if(!('Notification' in window))return false;
+  if(Notification.permission==='granted')return true;
+  if(Notification.permission==='denied')return false;
+  const perm=await Notification.requestPermission();
+  return perm==='granted';
+}
+
+function showReadyBanner(title,sub){
+  document.getElementById('readyBanner').classList.add('on');
+  document.querySelector('.rb-title').textContent=title;
+  document.getElementById('rbSub').textContent=sub;
+  setTimeout(()=>document.getElementById('readyBanner').classList.remove('on'),15000);
+}
+
+function fireNotif(title,body){
+  playChime();
+  showReadyBanner(title,body);
+  if(Notification.permission==='granted'){
+    try{
+      new Notification(title,{
+        body,
+        icon:'https://launchserve-demo.pages.dev/icon-192.png',
+        badge:'https://launchserve-demo.pages.dev/icon-192.png',
+        tag:'order-ready',
+        renotify:true,
+        requireInteraction:true
+      });
+    }catch(e){
+      // Fallback for iOS PWA — use service worker notification
+      if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+        navigator.serviceWorker.ready.then(sw=>{
+          sw.showNotification(title,{body,icon:'https://launchserve-demo.pages.dev/icon-192.png',tag:'order-ready',requireInteraction:true});
+        });
+      }
+    }
+  }
+}
+
 function startOrderReadyPoll(orderId){
   if(readyPollTimer)clearInterval(readyPollTimer);
   let foodNotified=false,drinkNotified=false;
@@ -824,33 +865,19 @@ function startOrderReadyPoll(orderId){
       const hasDrink=Array.isArray(di)&&di.length>0;
       const foodReady=!hasFood||(o.food_status==='ready'||o.food_status==='none');
       const drinkReady=!hasDrink||(o.drink_status==='ready'||o.drink_status==='none');
-      // Notify when food ready
       if(hasFood&&o.food_status==='ready'&&!foodNotified){
         foodNotified=true;
-        showReadyBanner(hasDrink&&!drinkReady?'Your food is ready!':'Your order is ready!',hasDrink&&!drinkReady?'Your drinks are on their way':'Come and collect or we\'ll bring it over');
-        playChime();
+        fireNotif('Your food is ready!',hasDrink&&!drinkReady?'Drinks are on their way':'Come and collect or we\'ll bring it over');
       }
-      // Notify when drinks ready
-      if(hasDrink&&(o.drink_status==='ready'||o.drink_status==='none')&&!drinkReady===false&&drinkReady&&!drinkNotified){
+      if(hasDrink&&drinkReady&&!drinkNotified&&(foodNotified||!hasFood)){
         drinkNotified=true;
-        if(foodReady){
-          showReadyBanner('Everything is ready!','Come and collect or we\'ll bring it over');
-          playChime();
-        } else {
-          showReadyBanner('Your drinks are ready!','Food is still being prepared');
-          playChime();
-        }
+        fireNotif('Everything is ready!','Come and collect or we\'ll bring it over shortly');
       }
-      // Stop polling when everything done
-      if(foodReady&&drinkReady&&(foodNotified||drinkNotified)){clearInterval(readyPollTimer);readyPollTimer=null;}
+      if(foodReady&&drinkReady&&(foodNotified||(!hasFood&&!hasDrink))){
+        clearInterval(readyPollTimer);readyPollTimer=null;
+      }
     }catch(e){}
   },5000);
-}
-function showReadyBanner(title,sub){
-  document.getElementById('readyBanner').classList.add('on');
-  document.querySelector('.rb-title').textContent=title;
-  document.getElementById('rbSub').textContent=sub;
-  setTimeout(()=>document.getElementById('readyBanner').classList.remove('on'),15000);
 }
 function resetCustomer(){
   if(readyPollTimer){clearInterval(readyPollTimer);readyPollTimer=null;}
