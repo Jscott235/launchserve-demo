@@ -305,6 +305,74 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
 .btn-refund{height:32px;padding:0 12px;background:none;border:1px solid rgba(217,48,37,.3);border-radius:4px;font-size:.72rem;font-weight:600;color:var(--red);cursor:pointer;margin-left:8px;min-height:32px}
 .btn-refund:active{opacity:.7}
 
+
+/* ── BOOKINGS ── */
+.bk-wrap{padding:20px 18px 40px}
+.bk-h{font-size:1.15rem;font-weight:700;color:var(--t);margin-bottom:4px}
+.bk-sub{font-size:.82rem;color:var(--t2);margin-bottom:20px;line-height:1.5}
+.bk-lbl{font-size:.74rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);margin:18px 0 8px}
+.bk-in{width:100%;height:48px;padding:0 14px;border:1px solid var(--bd);border-radius:8px;font-size:.92rem;background:#fff;color:var(--t);font-family:inherit}
+.bk-in:focus{outline:none;border-color:var(--p)}
+textarea.bk-in{height:76px;padding:12px 14px;resize:none}
+.bk-party{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.bk-pb{height:44px;border:1px solid var(--bd);border-radius:8px;background:#fff;font-size:.9rem;font-weight:600;color:var(--t);cursor:pointer;min-height:44px;transition:background .2s,border-color .2s,color .2s}
+.bk-pb.on{background:var(--p);border-color:var(--p);color:#fff}
+.bk-dates{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.bk-db{flex:0 0 auto;width:62px;padding:9px 0;border:1px solid var(--bd);border-radius:8px;background:#fff;text-align:center;cursor:pointer;min-height:44px;transition:background .2s,border-color .2s}
+.bk-db.on{background:var(--p);border-color:var(--p)}
+.bk-db.on .bk-dd,.bk-db.on .bk-dn{color:#fff}
+.bk-dd{font-size:.66rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--t2)}
+.bk-dn{font-size:1.02rem;font-weight:700;color:var(--t);margin-top:2px}
+.bk-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.bk-sb{height:42px;border:1px solid var(--bd);border-radius:8px;background:#fff;font-size:.83rem;font-weight:600;color:var(--t);cursor:pointer;min-height:42px;transition:background .2s,border-color .2s,color .2s}
+.bk-sb.on{background:var(--p);border-color:var(--p);color:#fff}
+.bk-sb:disabled{opacity:.32;cursor:not-allowed;text-decoration:line-through}
+.bk-full{font-size:.62rem;display:block;font-weight:500;margin-top:-1px}
+.bk-note{font-size:.74rem;color:var(--t2);margin-top:8px}
+.bk-conf{padding:36px 22px;text-align:center}
+.bk-cc{width:60px;height:60px;margin:0 auto 18px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center}
+.bk-cc svg{width:30px;height:30px;stroke:#fff;stroke-width:2.4;fill:none}
+.bk-ct{font-size:1.2rem;font-weight:700;color:var(--t);margin-bottom:6px}
+.bk-cs{font-size:.85rem;color:var(--t2);line-height:1.55;margin-bottom:22px}
+.bk-card{background:var(--bg2);border-radius:10px;padding:16px;text-align:left;margin-bottom:22px}
+.bk-row{display:flex;justify-content:space-between;padding:7px 0;font-size:.86rem}
+.bk-row+.bk-row{border-top:1px solid var(--bd)}
+.bk-rk{color:var(--t2)}
+.bk-rv{color:var(--t);font-weight:600}
+
+/* ── LOYALTY ── */
+.ly-card{background:linear-gradient(135deg,var(--p),#5B2C7E);border-radius:14px;padding:22px;color:#fff;margin-bottom:18px}
+.ly-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.ly-brand{font-size:1.05rem;font-weight:700;letter-spacing:.3px}
+.ly-brand span{display:block;font-size:.68rem;font-weight:500;letter-spacing:1.6px;opacity:.72;margin-top:2px}
+.ly-pts{font-size:2.5rem;font-weight:700;line-height:1}
+.ly-pl{font-size:.68rem;letter-spacing:1.4px;text-transform:uppercase;opacity:.75;margin-top:2px}
+.ly-bar{height:6px;background:rgba(255,255,255,.24);border-radius:3px;margin:16px 0 8px;overflow:hidden}
+.ly-fill{height:100%;background:#fff;border-radius:3px;width:0;transition:width .7s cubic-bezier(.32,1.14,.5,1)}
+.ly-next{font-size:.78rem;opacity:.9}
+.ly-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px}
+.ly-st{background:var(--bg2);border-radius:10px;padding:13px 8px;text-align:center}
+.ly-sv{font-size:1.15rem;font-weight:700;color:var(--t)}
+.ly-sl{font-size:.66rem;color:var(--t2);margin-top:3px;letter-spacing:.3px}
+.ly-sec{font-size:.74rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);margin:20px 0 10px}
+.ly-earn{display:flex;align-items:center;gap:12px;padding:11px 0}
+.ly-earn+.ly-earn{border-top:1px solid var(--bd)}
+.ly-ei{width:34px;height:34px;border-radius:8px;background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
+.ly-et{font-size:.85rem;color:var(--t);flex:1}
+.ly-ep{font-size:.82rem;font-weight:700;color:var(--p)}
+.ly-rw{display:flex;align-items:center;justify-content:space-between;padding:13px;border:1px solid var(--bd);border-radius:10px;margin-bottom:8px}
+.ly-rw.can{border-color:var(--p);background:rgba(107,45,138,.04)}
+.ly-rn{font-size:.88rem;font-weight:600;color:var(--t)}
+.ly-rc{font-size:.74rem;color:var(--t2);margin-top:2px}
+.ly-rb{height:34px;padding:0 14px;border-radius:6px;border:none;background:var(--p);color:#fff;font-size:.76rem;font-weight:700;cursor:pointer;min-height:34px}
+.ly-rb:disabled{background:var(--bd);color:var(--t2);cursor:not-allowed}
+.ly-look{padding:30px 18px;text-align:center}
+.ly-lt{font-size:1.05rem;font-weight:700;color:var(--t);margin-bottom:6px}
+.ly-ls{font-size:.83rem;color:var(--t2);margin-bottom:20px;line-height:1.5}
+.ly-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(80px);background:var(--t);color:#fff;padding:13px 20px;border-radius:9px;font-size:.85rem;font-weight:600;z-index:999;opacity:0;transition:transform .35s cubic-bezier(.32,1.14,.5,1),opacity .35s}
+.ly-toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+.ly-badge{display:inline-block;background:rgba(107,45,138,.1);color:var(--p);font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:10px;margin-left:7px}
+
 /* ── UTIL BUTTONS ── */
 .btn-full{width:100%;height:52px;background:var(--p);color:#fff;border:none;border-radius:8px;font-size:.92rem;font-weight:600;min-height:44px}
 .btn-full:active{opacity:.8}
@@ -322,6 +390,8 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
     </div>
     <div class="role-cards">
       <button class="role-card" onclick="showCustomer()"><div class="rc-info"><div class="rc-name">Customer ordering</div><div class="rc-desc">Browse the menu and order to your table</div></div><div class="rc-arr">›</div></button>
+      <button class="role-card" onclick="showBooking()"><div class="rc-info"><div class="rc-name">Book a table</div><div class="rc-desc">Reserve a table for any day this month</div></div><div class="rc-arr">›</div></button>
+      <button class="role-card" onclick="showLoyalty()"><div class="rc-info"><div class="rc-name">Rewards</div><div class="rc-desc">Check your points and claim rewards</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showKitchen()"><div class="rc-info"><div class="rc-name">Kitchen</div><div class="rc-desc">Food orders — live incoming, with timer</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showBar()"><div class="rc-info"><div class="rc-name">Bar / Barista</div><div class="rc-desc">Drink orders — live incoming, with timer</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showAdmin()"><div class="rc-info"><div class="rc-name">Admin</div><div class="rc-desc">Menu management, order history, stats</div></div><div class="rc-arr">›</div></button>
@@ -410,6 +480,73 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
   </div>
 </div>
 
+
+<!-- BOOKING APP -->
+<div class="screen" id="bookingApp">
+  <div class="top-bar" style="display:flex">
+    <button class="tb-back" onclick="bkBack()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="tb-title">Book a table</div>
+    <div style="width:40px"></div>
+  </div>
+  <div id="bkForm" class="bk-wrap">
+    <div class="bk-h">Reserve your table</div>
+    <div class="bk-sub">Choose your party size, date and time. We hold your table for 15 minutes.</div>
+
+    <div class="bk-lbl">Party size</div>
+    <div class="bk-party" id="bkParty"></div>
+
+    <div class="bk-lbl">Date</div>
+    <div class="bk-dates" id="bkDates"></div>
+
+    <div class="bk-lbl">Time</div>
+    <div class="bk-slots" id="bkSlots"><div class="bk-note">Select a date first</div></div>
+
+    <div class="bk-lbl">Your name</div>
+    <input class="bk-in" id="bkName" placeholder="Full name" autocomplete="name">
+
+    <div class="bk-lbl">Phone</div>
+    <input class="bk-in" id="bkPhone" type="tel" placeholder="Mobile number" autocomplete="tel">
+
+    <div class="bk-lbl">Email <span style="text-transform:none;letter-spacing:0;font-weight:500">(for rewards points)</span></div>
+    <input class="bk-in" id="bkEmail" type="email" placeholder="you@email.com" autocomplete="email">
+
+    <div class="bk-lbl">Anything we should know?</div>
+    <textarea class="bk-in" id="bkNotes" placeholder="High chair, allergies, occasion…"></textarea>
+
+    <button class="btn-full" style="margin-top:22px" id="bkSubmit" onclick="submitBooking()">Confirm booking</button>
+    <div class="bk-note" id="bkErr" style="color:var(--red);display:none"></div>
+  </div>
+
+  <div id="bkConf" style="display:none" class="bk-conf">
+    <div class="bk-cc"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="bk-ct">Table booked</div>
+    <div class="bk-cs" id="bkCs">We've got you down. See you soon.</div>
+    <div class="bk-card" id="bkCard"></div>
+    <button class="btn-full" onclick="goRoles()">Done</button>
+  </div>
+</div>
+
+<!-- LOYALTY APP -->
+<div class="screen" id="loyaltyApp">
+  <div class="top-bar" style="display:flex">
+    <button class="tb-back" onclick="goRoles()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="tb-title">Rewards</div>
+    <div style="width:40px"></div>
+  </div>
+
+  <div id="lyLookup" class="ly-look">
+    <div class="ly-lt">Dancing Cup Rewards</div>
+    <div class="ly-ls">Earn a point for every £1 you spend. Enter the email you order with to see your balance.</div>
+    <input class="bk-in" id="lyEmail" type="email" placeholder="you@email.com" autocomplete="email" style="text-align:center">
+    <button class="btn-full" style="margin-top:14px" onclick="lookupLoyalty()">View my points</button>
+    <div class="bk-note" id="lyErr" style="color:var(--red);display:none"></div>
+  </div>
+
+  <div id="lyCard" style="display:none;padding:18px 18px 40px"></div>
+</div>
+
+<div class="ly-toast" id="lyToast"></div>
+
 <!-- ITEM MODAL -->
 <div id="itemModal">
   <div class="im-hdr"><div class="im-cat" id="imCat"></div><button class="im-close" onclick="closeModal()">✕</button></div>
@@ -468,6 +605,8 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
   <div class="admin-nav">
     <button class="an-tab on" onclick="adminTab('stats')">Stats</button>
     <button class="an-tab" onclick="adminTab('orders')">Orders</button>
+    <button class="an-tab" onclick="adminTab('bookings')">Bookings</button>
+    <button class="an-tab" onclick="adminTab('loyalty')">Rewards</button>
     <button class="an-tab" onclick="adminTab('menu')">Menu</button>
   </div>
   <div class="admin-body" id="adminBody"></div>
@@ -513,6 +652,213 @@ async function sbq(method,path,body){
   if(r.status===204||r.status===201&&method!=='POST')return null;
   const t=await r.text();
   return t?JSON.parse(t):null;
+}
+
+
+/* ══════════ BOOKINGS ══════════ */
+const BK={party:2,date:null,time:null,slots:[]};
+
+function showBooking(){
+  setScreen('bookingApp');
+  document.getElementById('bkForm').style.display='';
+  document.getElementById('bkConf').style.display='none';
+  buildParty(); buildDates();
+}
+function bkBack(){ goRoles(); }
+
+function buildParty(){
+  const w=document.getElementById('bkParty'); w.innerHTML='';
+  [1,2,3,4,5,6].forEach(n=>{
+    const b=document.createElement('button');
+    b.className='bk-pb'+(n===BK.party?' on':'');
+    b.textContent=n===6?'6+':n;
+    b.onclick=()=>{BK.party=n;buildParty();if(BK.date)loadSlots();};
+    w.appendChild(b);
+  });
+}
+
+function buildDates(){
+  const w=document.getElementById('bkDates'); w.innerHTML='';
+  const D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  for(let i=0;i<14;i++){
+    const d=new Date(); d.setDate(d.getDate()+i);
+    const iso=d.toISOString().slice(0,10);
+    const b=document.createElement('button');
+    b.className='bk-db'+(iso===BK.date?' on':'');
+    b.innerHTML='<div class="bk-dd">'+(i===0?'Today':D[d.getDay()])+'</div><div class="bk-dn">'+d.getDate()+'</div>';
+    b.onclick=()=>{BK.date=iso;BK.time=null;buildDates();loadSlots();};
+    w.appendChild(b);
+  }
+}
+
+async function loadSlots(){
+  const w=document.getElementById('bkSlots');
+  w.innerHTML='<div class="bk-note">Checking availability…</div>';
+  const slots=await sbq('GET','/rest/v1/ls_booking_slots?venue=eq.'+VENUE+'&order=slot_time.asc&select=slot_time,max_covers',null)||[];
+  const booked=await sbq('GET','/rest/v1/ls_bookings?venue=eq.'+VENUE+'&booking_date=eq.'+BK.date+'&status=in.(confirmed,seated)&select=booking_time,party_size',null)||[];
+  const used={};
+  booked.forEach(b=>{const t=b.booking_time.slice(0,5);used[t]=(used[t]||0)+b.party_size;});
+  w.innerHTML='';
+  const now=new Date(), isToday=BK.date===now.toISOString().slice(0,10);
+  slots.forEach(s=>{
+    const t=s.slot_time.slice(0,5);
+    const remaining=s.max_covers-(used[t]||0);
+    const past=isToday && (parseInt(t.slice(0,2))*60+parseInt(t.slice(3))) <= (now.getHours()*60+now.getMinutes());
+    const b=document.createElement('button');
+    b.className='bk-sb'+(t===BK.time?' on':'');
+    b.disabled = past || remaining < BK.party;
+    b.innerHTML = t + (remaining<BK.party&&!past ? '<span class="bk-full">Full</span>' : '');
+    b.onclick=()=>{BK.time=t;loadSlots();};
+    w.appendChild(b);
+  });
+}
+
+async function submitBooking(){
+  const err=document.getElementById('bkErr');
+  const name=document.getElementById('bkName').value.trim();
+  const phone=document.getElementById('bkPhone').value.trim();
+  const email=document.getElementById('bkEmail').value.trim();
+  const notes=document.getElementById('bkNotes').value.trim();
+  const fail=m=>{err.textContent=m;err.style.display='block';};
+  err.style.display='none';
+  if(!BK.date) return fail('Please choose a date.');
+  if(!BK.time) return fail('Please choose a time.');
+  if(!name)     return fail('Please enter your name.');
+  if(!phone)    return fail('Please enter a phone number so we can reach you.');
+
+  const btn=document.getElementById('bkSubmit');
+  btn.disabled=true; btn.textContent='Booking…';
+
+  /* re-check capacity at submit time — prevents double-booking */
+  const slots=await sbq('GET','/rest/v1/ls_booking_slots?venue=eq.'+VENUE+'&slot_time=eq.'+BK.time+':00&select=max_covers',null)||[];
+  const booked=await sbq('GET','/rest/v1/ls_bookings?venue=eq.'+VENUE+'&booking_date=eq.'+BK.date+'&booking_time=eq.'+BK.time+':00&status=in.(confirmed,seated)&select=party_size',null)||[];
+  const cap=slots.length?slots[0].max_covers:20;
+  const used=booked.reduce((s,b)=>s+b.party_size,0);
+  if(cap-used < BK.party){
+    btn.disabled=false; btn.textContent='Confirm booking';
+    loadSlots();
+    return fail('Sorry — that slot just filled up. Please pick another time.');
+  }
+
+  try{
+    await sbq('POST','/rest/v1/ls_bookings',{
+      venue:VENUE,name,phone,email:email||null,party_size:BK.party,
+      booking_date:BK.date,booking_time:BK.time+':00',notes:notes||null,status:'confirmed'
+    });
+  }catch(e){
+    btn.disabled=false; btn.textContent='Confirm booking';
+    return fail('Could not save the booking. Please try again.');
+  }
+
+  if(email) await addPoints(email,25,'Table booking');
+
+  const d=new Date(BK.date+'T'+BK.time);
+  document.getElementById('bkCard').innerHTML=
+    '<div class="bk-row"><span class="bk-rk">Name</span><span class="bk-rv">'+name+'</span></div>'+
+    '<div class="bk-row"><span class="bk-rk">Party</span><span class="bk-rv">'+BK.party+(BK.party===6?'+':'')+' people</span></div>'+
+    '<div class="bk-row"><span class="bk-rk">Date</span><span class="bk-rv">'+d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+'</span></div>'+
+    '<div class="bk-row"><span class="bk-rk">Time</span><span class="bk-rv">'+BK.time+'</span></div>';
+  document.getElementById('bkCs').textContent = email
+    ? "We've got you down — and added 25 reward points."
+    : "We've got you down. See you soon.";
+  document.getElementById('bkForm').style.display='none';
+  document.getElementById('bkConf').style.display='';
+  btn.disabled=false; btn.textContent='Confirm booking';
+}
+
+/* ══════════ LOYALTY ══════════ */
+const REWARDS=[
+  {n:'Free filter coffee',   c:100},
+  {n:'Free cake slice',      c:250},
+  {n:'£5 off your bill',c:500},
+  {n:'Free lunch for two',   c:1000}
+];
+const PTS_PER_POUND=10;
+
+function showLoyalty(){
+  setScreen('loyaltyApp');
+  document.getElementById('lyLookup').style.display='';
+  document.getElementById('lyCard').style.display='none';
+  document.getElementById('lyErr').style.display='none';
+}
+
+function toast(msg){
+  const t=document.getElementById('lyToast');
+  t.textContent=msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),2400);
+}
+
+async function addPoints(email,pts,reason,orderId){
+  if(!email) return;
+  const rows=await sbq('GET','/rest/v1/ls_loyalty?venue=eq.'+VENUE+'&email=eq.'+encodeURIComponent(email)+'&select=*',null)||[];
+  if(rows.length){
+    const r=rows[0];
+    await sbq('PATCH','/rest/v1/ls_loyalty?id=eq.'+r.id,{
+      points:r.points+pts, lifetime_pts:r.lifetime_pts+pts,
+      visits:r.visits+1, updated_at:new Date().toISOString()
+    });
+  }else{
+    await sbq('POST','/rest/v1/ls_loyalty',{venue:VENUE,email,points:pts,lifetime_pts:pts,visits:1});
+  }
+  await sbq('POST','/rest/v1/ls_loyalty_log',{venue:VENUE,email,points:pts,reason,order_id:orderId||null});
+}
+
+async function lookupLoyalty(){
+  const email=document.getElementById('lyEmail').value.trim();
+  const err=document.getElementById('lyErr');
+  if(!email||!email.includes('@')){err.textContent='Please enter a valid email.';err.style.display='block';return;}
+  err.style.display='none';
+  let rows=await sbq('GET','/rest/v1/ls_loyalty?venue=eq.'+VENUE+'&email=eq.'+encodeURIComponent(email)+'&select=*',null)||[];
+  if(!rows.length){
+    await sbq('POST','/rest/v1/ls_loyalty',{venue:VENUE,email,points:0,lifetime_pts:0,visits:0});
+    rows=[{email,points:0,lifetime_pts:0,visits:0,total_spent:0}];
+  }
+  renderLoyalty(rows[0]);
+}
+
+function renderLoyalty(r){
+  const next=REWARDS.find(x=>x.c>r.points);
+  const pct=next?Math.min(100,(r.points/next.c)*100):100;
+  document.getElementById('lyLookup').style.display='none';
+  const el=document.getElementById('lyCard');
+  el.style.display='';
+  el.innerHTML=
+   '<div class="ly-card">'+
+     '<div class="ly-top"><div class="ly-brand">Dancing Cup<span>REWARDS</span></div>'+
+     '<div style="text-align:right"><div class="ly-pts">'+r.points+'</div><div class="ly-pl">Points</div></div></div>'+
+     '<div class="ly-bar"><div class="ly-fill" id="lyFill"></div></div>'+
+     '<div class="ly-next">'+(next?((next.c-r.points)+' points until '+next.n):'All rewards unlocked')+'</div>'+
+   '</div>'+
+   '<div class="ly-stats">'+
+     '<div class="ly-st"><div class="ly-sv">'+r.visits+'</div><div class="ly-sl">Visits</div></div>'+
+     '<div class="ly-st"><div class="ly-sv">'+r.lifetime_pts+'</div><div class="ly-sl">Lifetime</div></div>'+
+     '<div class="ly-st"><div class="ly-sv">£'+parseFloat(r.total_spent||0).toFixed(0)+'</div><div class="ly-sl">Spent</div></div>'+
+   '</div>'+
+   '<div class="ly-sec">Your rewards</div>'+
+   REWARDS.map(w=>{
+     const can=r.points>=w.c;
+     return '<div class="ly-rw'+(can?' can':'')+'"><div><div class="ly-rn">'+w.n+'</div>'+
+       '<div class="ly-rc">'+w.c+' points</div></div>'+
+       '<button class="ly-rb" '+(can?'':'disabled')+' onclick="redeem(\''+r.email+'\','+w.c+',\''+w.n+'\')">'+(can?'Claim':'Locked')+'</button></div>';
+   }).join('')+
+   '<div class="ly-sec">How to earn</div>'+
+   '<div class="ly-earn"><div class="ly-ei">☕</div><div class="ly-et">Every £1 spent</div><div class="ly-ep">10 pts</div></div>'+
+   '<div class="ly-earn"><div class="ly-ei">📅</div><div class="ly-et">Book a table</div><div class="ly-ep">25 pts</div></div>'+
+   '<div class="ly-earn"><div class="ly-ei">🎂</div><div class="ly-et">Birthday treat</div><div class="ly-ep">100 pts</div></div>'+
+   '<button class="btn-full" style="margin-top:24px;background:none;border:1px solid var(--bd);color:var(--t)" onclick="showLoyalty()">Check another account</button>';
+  requestAnimationFrame(()=>{const f=document.getElementById('lyFill');if(f)f.style.width=pct+'%';});
+}
+
+async function redeem(email,cost,name){
+  const rows=await sbq('GET','/rest/v1/ls_loyalty?venue=eq.'+VENUE+'&email=eq.'+encodeURIComponent(email)+'&select=*',null)||[];
+  if(!rows.length) return;
+  const r=rows[0];
+  if(r.points<cost){toast('Not enough points');return;}
+  await sbq('PATCH','/rest/v1/ls_loyalty?id=eq.'+r.id,{points:r.points-cost,updated_at:new Date().toISOString()});
+  await sbq('POST','/rest/v1/ls_loyalty_log',{venue:VENUE,email,points:-cost,reason:'Redeemed: '+name});
+  toast(name+' — show this to staff');
+  r.points-=cost;
+  renderLoyalty(r);
 }
 
 /* ── SOUND ── */
@@ -620,7 +966,8 @@ function setScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   const btn=document.getElementById('swBtn');
-  btn.className='sw-btn'+(id!=='roleScreen'?' on':'');
+  const noSw=['roleScreen','bookingApp','loyaltyApp'];
+  btn.className='sw-btn'+(noSw.indexOf(id)===-1?' on':'');
 }
 
 function goView(id){
@@ -818,6 +1165,12 @@ async function placeOrder(){
     console.error('Order save FAILED:',e);
     alert('Could not send order — please try again or order at the counter.');
     return;
+  }
+
+  // Loyalty accrual
+  if(email){
+    try{ await addPoints(email, Math.floor(total*PTS_PER_POUND), 'Order '+ref, null); }
+    catch(e){ console.warn('loyalty accrual failed', e); }
   }
 
   // Confirm screen
@@ -1096,6 +1449,41 @@ async function loadAdminTab(tab){
       const t=new Date(o.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       let items=o.items;if(typeof items==='string')try{items=JSON.parse(items);}catch(e){items=[];}
       div.innerHTML='<div class="oh-head"><div class="oh-ref">#'+o.id+' — Table '+o.table_num+'</div><div class="oh-time">'+t+'</div></div><div class="oh-detail">'+((Array.isArray(items)?items:[])).map(i=>i.q+'× '+i.n).join(', ')+'</div><div class="oh-detail">£'+parseFloat(o.total).toFixed(2)+' · '+(o.payment==='now'?'Paid':'Pay at counter')+(o.customer_email?' · '+o.customer_email:'')+'</div><span class="oh-status '+(o.status==='completed'?'completed':'active')+'">'+o.status+'</span>';
+      body.appendChild(div);
+    });
+  }else if(tab==='bookings'){
+    const today=new Date().toISOString().slice(0,10);
+    const data=await sbq('GET','/rest/v1/ls_bookings?venue=eq.'+VENUE+'&booking_date=gte.'+today+'&order=booking_date.asc,booking_time.asc&limit=100&select=*',null)||[];
+    if(!data.length){body.innerHTML='<div class="st-empty">No upcoming bookings</div>';return;}
+    const covers=data.filter(b=>b.booking_date===today).reduce((s,b)=>s+b.party_size,0);
+    body.innerHTML='<div class="stat-grid"><div class="stat-card"><div class="sc-val">'+data.filter(b=>b.booking_date===today).length+'</div><div class="sc-lbl">Bookings today</div></div><div class="stat-card"><div class="sc-val">'+covers+'</div><div class="sc-lbl">Covers today</div></div></div>';
+    let day='';
+    data.forEach(b=>{
+      if(b.booking_date!==day){
+        day=b.booking_date;
+        const d=new Date(day+'T12:00');
+        const h=document.createElement('div');h.className='admin-notice';
+        h.textContent=(day===today?'Today — ':'')+d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+        body.appendChild(h);
+      }
+      const div=document.createElement('div');div.className='order-hist-item';
+      div.innerHTML='<div class="oh-head"><div class="oh-ref">'+b.booking_time.slice(0,5)+' — '+b.name+'</div><div class="oh-time">'+b.party_size+' covers</div></div>'+
+        '<div class="oh-detail">'+(b.phone||'')+(b.email?' · '+b.email:'')+'</div>'+
+        (b.notes?'<div class="oh-detail">“'+b.notes+'”</div>':'')+
+        '<span class="oh-status '+(b.status==='confirmed'?'active':'completed')+'">'+b.status+'</span>';
+      body.appendChild(div);
+    });
+  }else if(tab==='loyalty'){
+    const data=await sbq('GET','/rest/v1/ls_loyalty?venue=eq.'+VENUE+'&order=lifetime_pts.desc&limit=50&select=*',null)||[];
+    const members=data.length;
+    const totalPts=data.reduce((s,r)=>s+r.points,0);
+    body.innerHTML='<div class="stat-grid"><div class="stat-card"><div class="sc-val">'+members+'</div><div class="sc-lbl">Members</div></div><div class="stat-card"><div class="sc-val">'+totalPts+'</div><div class="sc-lbl">Points outstanding</div></div></div>';
+    if(!data.length){body.innerHTML+='<div class="st-empty">No members yet</div>';return;}
+    body.innerHTML+='<div class="admin-notice">Top members by lifetime points</div>';
+    data.forEach(r=>{
+      const div=document.createElement('div');div.className='order-hist-item';
+      div.innerHTML='<div class="oh-head"><div class="oh-ref">'+r.email+'</div><div class="oh-time">'+r.points+' pts</div></div>'+
+        '<div class="oh-detail">'+r.visits+' visits · '+r.lifetime_pts+' lifetime points</div>';
       body.appendChild(div);
     });
   }else{
