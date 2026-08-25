@@ -425,6 +425,12 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
 .ci-dm{font-size:.88rem;color:var(--t2);line-height:1.6;margin-bottom:24px}
 .ci-fire{background:rgba(107,45,138,.07);border-radius:10px;padding:14px;font-size:.82rem;color:var(--p);font-weight:600;line-height:1.5;margin-bottom:22px}
 
+
+.spam-note{display:flex;gap:9px;align-items:flex-start;background:var(--bg2);border-radius:9px;padding:11px 13px;margin-top:14px;margin-bottom:18px;text-align:left}
+.spam-ic{font-size:.95rem;flex-shrink:0;line-height:1.4}
+.spam-tx{font-size:.75rem;color:var(--t2);line-height:1.5}
+.spam-tx b{color:var(--t)}
+
 /* ── UTIL BUTTONS ── */
 .btn-full{width:100%;height:52px;background:var(--p);color:#fff;border:none;border-radius:8px;font-size:.92rem;font-weight:600;min-height:44px}
 .btn-full:active{opacity:.8}
@@ -599,6 +605,7 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
     <div class="po-tot"><span class="po-tl" id="poCount">0 items</span><span class="po-tv" id="poTotal">£0.00</span></div>
     <div class="po-pay" id="poPay"></div>
     <button class="btn-full" onclick="submitPreorder()" id="poSubmit">Confirm pre-order</button>
+    <div class="spam-tx" style="text-align:center;margin-top:9px">Receipt sent by email &mdash; check your spam folder if it doesn't arrive.</div>
   </div>
   <div style="position:fixed;left:0;right:0;bottom:0;padding:10px 18px;background:#fff;border-top:1px solid var(--bd);z-index:59" id="poSkipBar">
     <button class="po-skip" onclick="poSkip()">No thanks — we'll order when we arrive</button>
@@ -1034,6 +1041,7 @@ function showBookingConfirm(withPreorder, poTotal){
     html += '<div class="bk-row"><span class="bk-rk">Pre-order</span><span class="bk-rv">\u00a3' + poTotal.toFixed(2) +
             ' <span class="po-chip">' + (PO.payment === 'prepaid' ? 'Paid' : 'Pay at table') + '</span></span></div>';
   }
+  if(b.email) html += '<div class="spam-note"><span class="spam-ic">\u2709\uFE0F</span><span class="spam-tx">We\u2019ve emailed your confirmation. <b>If it\u2019s not there in a minute, check your spam or junk folder</b> \u2014 and mark it as safe so we reach you next time.</span></div>';
   document.getElementById('bkCard').innerHTML = html;
   document.getElementById('bkCs').textContent = withPreorder
     ? 'Booked, and your order is with the kitchen. It\u2019ll be ready as you sit down.'
@@ -1183,6 +1191,15 @@ async function doCheckin(){
     ? 'You\u2019re on table ' + table + '. Someone will be over shortly.'
     : 'A member of the team will show you to your table.';
 
+  const doneWrap = document.getElementById('ciDone');
+  if(CI.booking && CI.booking.email && !document.getElementById('ciSpam')){
+    const n = document.createElement('div');
+    n.id = 'ciSpam';
+    n.className = 'spam-note';
+    n.style.textAlign = 'left';
+    n.innerHTML = '<span class="spam-ic">\u2709\uFE0F</span><span class="spam-tx">Your receipt is on its way by email. <b>If it\u2019s not there in a minute, check your spam or junk folder.</b></span>';
+    doneWrap.insertBefore(n, doneWrap.querySelector('.btn-full'));
+  }
   const fireEl = document.getElementById('ciFire');
   if(fired){
     const parts = [];
