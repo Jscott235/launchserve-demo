@@ -405,6 +405,26 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
 .po-skip{width:100%;background:none;border:none;color:var(--t2);font-size:.8rem;padding:10px;cursor:pointer;text-decoration:underline;min-height:44px}
 .po-chip{display:inline-block;background:rgba(107,45,138,.1);color:var(--p);font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:9px;margin-left:6px}
 
+
+/* ── CHECK-IN ── */
+.ci-wrap{padding:26px 18px 40px}
+.ci-h{font-size:1.2rem;font-weight:700;color:var(--t);margin-bottom:5px}
+.ci-sub{font-size:.83rem;color:var(--t2);margin-bottom:22px;line-height:1.5}
+.ci-found{background:var(--bg2);border-radius:11px;padding:16px;margin-bottom:16px}
+.ci-fn{font-size:1rem;font-weight:700;color:var(--t);margin-bottom:3px}
+.ci-fd{font-size:.8rem;color:var(--t2);line-height:1.5}
+.ci-pre{margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)}
+.ci-pl{font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--p);margin-bottom:6px}
+.ci-pi{font-size:.8rem;color:var(--t);padding:2px 0}
+.ci-tbl{margin:20px 0}
+.ci-tl{font-size:.74rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);margin-bottom:8px}
+.ci-done{padding:40px 22px;text-align:center}
+.ci-dc{width:66px;height:66px;margin:0 auto 20px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center}
+.ci-dc svg{width:34px;height:34px;stroke:#fff;stroke-width:2.4;fill:none}
+.ci-dt{font-size:1.25rem;font-weight:700;color:var(--t);margin-bottom:8px}
+.ci-dm{font-size:.88rem;color:var(--t2);line-height:1.6;margin-bottom:24px}
+.ci-fire{background:rgba(107,45,138,.07);border-radius:10px;padding:14px;font-size:.82rem;color:var(--p);font-weight:600;line-height:1.5;margin-bottom:22px}
+
 /* ── UTIL BUTTONS ── */
 .btn-full{width:100%;height:52px;background:var(--p);color:#fff;border:none;border-radius:8px;font-size:.92rem;font-weight:600;min-height:44px}
 .btn-full:active{opacity:.8}
@@ -423,6 +443,7 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
     <div class="role-cards">
       <button class="role-card" onclick="showCustomer()"><div class="rc-info"><div class="rc-name">Customer ordering</div><div class="rc-desc">Browse the menu and order to your table</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showBooking()"><div class="rc-info"><div class="rc-name">Book a table</div><div class="rc-desc">Reserve a table for any day this month</div></div><div class="rc-arr">›</div></button>
+      <button class="role-card" onclick="showCheckin()"><div class="rc-info"><div class="rc-name">I'm here</div><div class="rc-desc">Check in for your booking</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showLoyalty()"><div class="rc-info"><div class="rc-name">Rewards</div><div class="rc-desc">Check your points and claim rewards</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showKitchen()"><div class="rc-info"><div class="rc-name">Kitchen</div><div class="rc-desc">Food orders — live incoming, with timer</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showBar()"><div class="rc-info"><div class="rc-name">Bar / Barista</div><div class="rc-desc">Drink orders — live incoming, with timer</div></div><div class="rc-arr">›</div></button>
@@ -581,6 +602,34 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
   </div>
   <div style="position:fixed;left:0;right:0;bottom:0;padding:10px 18px;background:#fff;border-top:1px solid var(--bd);z-index:59" id="poSkipBar">
     <button class="po-skip" onclick="poSkip()">No thanks — we'll order when we arrive</button>
+  </div>
+</div>
+
+
+<!-- CHECK IN -->
+<div class="screen" id="checkinApp">
+  <div class="top-bar" style="display:flex">
+    <button class="tb-back" onclick="goRoles()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="tb-title">I'm here</div>
+    <div style="width:40px"></div>
+  </div>
+
+  <div id="ciLookup" class="ci-wrap">
+    <div class="ci-h">Let us know you've arrived</div>
+    <div class="ci-sub">Enter the phone number you booked with. If you ordered ahead, we'll send it to the kitchen now.</div>
+    <input class="bk-in" id="ciPhone" type="tel" placeholder="Mobile number" autocomplete="tel">
+    <button class="btn-full" style="margin-top:14px" onclick="findBooking()" id="ciFind">Find my booking</button>
+    <div class="bk-note" id="ciErr" style="color:var(--red);display:none"></div>
+  </div>
+
+  <div id="ciConfirm" class="ci-wrap" style="display:none"></div>
+
+  <div id="ciDone" class="ci-done" style="display:none">
+    <div class="ci-dc"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="ci-dt">You're checked in</div>
+    <div class="ci-dm" id="ciDm">A member of the team will show you to your table.</div>
+    <div class="ci-fire" id="ciFire" style="display:none"></div>
+    <button class="btn-full" onclick="goRoles()">Done</button>
   </div>
 </div>
 
@@ -993,6 +1042,161 @@ function showBookingConfirm(withPreorder, poTotal){
   document.getElementById('bkConf').style.display = '';
 }
 
+
+/* ══════════ ARRIVAL CHECK-IN ══════════ */
+const CI = { booking:null, preorder:null };
+
+function showCheckin(){
+  setScreen('checkinApp');
+  CI.booking = null; CI.preorder = null;
+  document.getElementById('ciLookup').style.display = '';
+  document.getElementById('ciConfirm').style.display = 'none';
+  document.getElementById('ciDone').style.display = 'none';
+  document.getElementById('ciErr').style.display = 'none';
+  document.getElementById('ciPhone').value = '';
+}
+
+async function findBooking(){
+  const phone = document.getElementById('ciPhone').value.trim();
+  const err = document.getElementById('ciErr');
+  const btn = document.getElementById('ciFind');
+  err.style.display = 'none';
+  if(phone.length < 6){ err.textContent = 'Please enter the phone number you booked with.'; err.style.display='block'; return; }
+
+  btn.disabled = true; btn.textContent = 'Looking\u2026';
+  const today = new Date().toISOString().slice(0,10);
+  const rows = await sbq('GET',
+    '/rest/v1/ls_bookings?venue=eq.'+VENUE+
+    '&phone=eq.'+encodeURIComponent(phone)+
+    '&booking_date=eq.'+today+
+    '&status=in.(confirmed,arrived)&order=booking_time.asc&select=*', null) || [];
+  btn.disabled = false; btn.textContent = 'Find my booking';
+
+  if(!rows.length){
+    err.textContent = 'No booking found for that number today. Please see a member of the team.';
+    err.style.display = 'block';
+    return;
+  }
+  CI.booking = rows[0];
+
+  const pres = await sbq('GET','/rest/v1/ls_booking_preorders?venue=eq.'+VENUE+
+    '&booking_id=eq.'+CI.booking.id+'&select=*', null) || [];
+  CI.preorder = pres.length ? pres[0] : null;
+
+  renderCheckinConfirm();
+}
+
+function renderCheckinConfirm(){
+  const b = CI.booking;
+  const d = new Date(b.booking_date + 'T' + b.booking_time);
+  let html =
+    '<div class="ci-h">Welcome back, ' + b.name.split(' ')[0] + '</div>' +
+    '<div class="ci-sub">Just confirm this is you and we\u2019ll let the team know.</div>' +
+    '<div class="ci-found">' +
+      '<div class="ci-fn">' + b.name + '</div>' +
+      '<div class="ci-fd">' + b.party_size + (b.party_size === 6 ? '+' : '') + ' people \u00b7 ' +
+        d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}) +
+        ' at ' + b.booking_time.slice(0,5) + '</div>';
+
+  if(CI.preorder){
+    const items = CI.preorder.items || [];
+    html += '<div class="ci-pre"><div class="ci-pl">Your pre-order \u00b7 \u00a3' +
+      parseFloat(CI.preorder.total).toFixed(2) +
+      (CI.preorder.payment === 'prepaid' ? ' \u00b7 paid' : ' \u00b7 pay at table') + '</div>';
+    items.forEach(i => { html += '<div class="ci-pi">' + i.qty + '\u00d7 ' + i.name + '</div>'; });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  html +=
+    '<div class="ci-tbl"><div class="ci-tl">Table number ' +
+      '<span style="text-transform:none;letter-spacing:0;font-weight:500">(if you\u2019ve been seated)</span></div>' +
+    '<input class="bk-in" id="ciTable" type="number" min="1" max="99" placeholder="Leave blank if not seated yet"></div>';
+
+  html += '<button class="btn-full" onclick="doCheckin()" id="ciGo">' +
+    (CI.preorder ? 'Check in &amp; send my order' : 'Check in') + '</button>';
+  html += '<button class="po-skip" onclick="showCheckin()">That\u2019s not me</button>';
+
+  document.getElementById('ciLookup').style.display = 'none';
+  const el = document.getElementById('ciConfirm');
+  el.style.display = ''; el.innerHTML = html;
+}
+
+async function doCheckin(){
+  const btn = document.getElementById('ciGo');
+  btn.disabled = true; btn.textContent = 'Checking in\u2026';
+  const tableEl = document.getElementById('ciTable');
+  const table = tableEl && tableEl.value ? tableEl.value : null;
+  const b = CI.booking;
+
+  try{
+    await sbq('PATCH','/rest/v1/ls_bookings?id=eq.' + b.id, {
+      status: 'arrived',
+      checked_in_at: new Date().toISOString(),
+      table_no: table
+    });
+  }catch(e){
+    btn.disabled = false; btn.textContent = 'Check in';
+    alert('Could not check you in. Please see a member of the team.');
+    return;
+  }
+
+  let fired = false, foodN = 0, drinkN = 0;
+
+  if(CI.preorder && CI.preorder.status === 'pending'){
+    const items = CI.preorder.items || [];
+    const allItems = items.map(i => {
+      const entry = Object.entries(CATS).find(([k,v]) => v.items.find(x => x.id === i.id));
+      const t = entry ? entry[1].type : 'food';
+      return { n: i.name, q: i.qty, price: i.price, type: (t === 'drink' ? 'drink' : 'food') };
+    });
+    const foodItems  = allItems.filter(i => i.type === 'food');
+    const drinkItems = allItems.filter(i => i.type === 'drink');
+    foodN = foodItems.length; drinkN = drinkItems.length;
+
+    const ref = 'P' + Math.floor(Math.random() * 900 + 100);
+    try{
+      await sbq('POST','/rest/v1/ls_orders', {
+        id: ref,
+        venue: VENUE,
+        table_num: table || ('BK' + b.id),
+        items: allItems,
+        food_items: foodItems,
+        drink_items: drinkItems,
+        total: CI.preorder.total,
+        payment: CI.preorder.payment === 'prepaid' ? 'card' : 'counter',
+        customer_email: b.email || null,
+        status: 'active',
+        food_status:  foodItems.length  ? 'active' : 'none',
+        drink_status: drinkItems.length ? 'active' : 'none'
+      });
+      await sbq('PATCH','/rest/v1/ls_booking_preorders?id=eq.' + CI.preorder.id, {
+        status: 'fired', fired_at: new Date().toISOString()
+      });
+      fired = true;
+    }catch(e){ console.warn('preorder fire failed', e); }
+  }
+
+  document.getElementById('ciConfirm').style.display = 'none';
+  document.getElementById('ciDone').style.display = '';
+  document.getElementById('ciDm').textContent = table
+    ? 'You\u2019re on table ' + table + '. Someone will be over shortly.'
+    : 'A member of the team will show you to your table.';
+
+  const fireEl = document.getElementById('ciFire');
+  if(fired){
+    const parts = [];
+    if(foodN)  parts.push('kitchen');
+    if(drinkN) parts.push('bar');
+    fireEl.style.display = '';
+    fireEl.textContent = 'Your order is with the ' + parts.join(' and ') +
+      ' now \u2014 it\u2019ll be with you shortly.';
+  }else{
+    fireEl.style.display = 'none';
+  }
+  btn.disabled = false;
+}
+
 /* ══════════ LOYALTY ══════════ */
 const REWARDS=[
   {n:'Free filter coffee',   c:100},
@@ -1193,7 +1397,7 @@ function setScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   const btn=document.getElementById('swBtn');
-  const noSw=['roleScreen','bookingApp','loyaltyApp','preorderApp'];
+  const noSw=['roleScreen','bookingApp','loyaltyApp','preorderApp','checkinApp'];
   btn.className='sw-btn'+(noSw.indexOf(id)===-1?' on':'');
 }
 
@@ -1700,7 +1904,8 @@ async function loadAdminTab(tab){
         '<div class="oh-detail">'+(b.phone||'')+(b.email?' · '+b.email:'')+'</div>'+
         (b.notes?'<div class="oh-detail">“'+b.notes+'”</div>':'')+
         (preMap[b.id]?'<div class="oh-detail" style="color:var(--p);font-weight:600">Pre-order · £'+parseFloat(preMap[b.id].total).toFixed(2)+' · '+(preMap[b.id].payment==='prepaid'?'PAID':'pay at table')+'<br>'+(preMap[b.id].items||[]).map(function(i){return i.qty+'× '+i.name;}).join(', ')+'</div>':'')+
-        '<span class="oh-status '+(b.status==='confirmed'?'active':'completed')+'">'+b.status+'</span>';
+        '<span class="oh-status '+(b.status==='arrived'?'active':(b.status==='confirmed'?'active':'completed'))+'">'+
+          (b.status==='arrived'?('ARRIVED'+(b.table_no?' \u00b7 TABLE '+b.table_no:'')):b.status)+'</span>';
       body.appendChild(div);
     });
   }else if(tab==='loyalty'){
