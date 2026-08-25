@@ -373,6 +373,38 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
 .ly-toast.on{transform:translateX(-50%) translateY(0);opacity:1}
 .ly-badge{display:inline-block;background:rgba(107,45,138,.1);color:var(--p);font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:10px;margin-left:7px}
 
+
+/* ── PRE-ORDER ── */
+.po-wrap{padding:20px 18px 120px}
+.po-h{font-size:1.15rem;font-weight:700;color:var(--t);margin-bottom:4px}
+.po-sub{font-size:.82rem;color:var(--t2);margin-bottom:18px;line-height:1.5}
+.po-modes{display:flex;gap:8px;margin-bottom:20px}
+.po-mode{flex:1;padding:14px 10px;border:1px solid var(--bd);border-radius:10px;background:#fff;cursor:pointer;text-align:center;transition:border-color .2s,background .2s;min-height:44px}
+.po-mode.on{border-color:var(--p);background:rgba(107,45,138,.05)}
+.po-mi{font-size:1.3rem;margin-bottom:4px}
+.po-ml{font-size:.85rem;font-weight:700;color:var(--t)}
+.po-md{font-size:.7rem;color:var(--t2);margin-top:2px;line-height:1.35}
+.po-cat{font-size:.74rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);margin:20px 0 8px}
+.po-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bd)}
+.po-in{flex:1;min-width:0}
+.po-nm{font-size:.88rem;font-weight:600;color:var(--t);line-height:1.3}
+.po-ds{font-size:.72rem;color:var(--t2);margin-top:2px;line-height:1.4}
+.po-pr{font-size:.85rem;font-weight:700;color:var(--p);margin-top:3px}
+.po-ctl{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.po-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--bd);background:#fff;font-size:1rem;color:var(--t);cursor:pointer;line-height:1;min-height:30px;padding:0}
+.po-btn.add{background:var(--p);border-color:var(--p);color:#fff}
+.po-qty{font-size:.85rem;font-weight:700;min-width:14px;text-align:center;color:var(--t)}
+.po-bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--bd);padding:14px 18px;box-shadow:0 -3px 14px rgba(0,0,0,.07);z-index:60}
+.po-tot{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.po-tl{font-size:.8rem;color:var(--t2)}
+.po-tv{font-size:1.2rem;font-weight:700;color:var(--t)}
+.po-pay{display:flex;gap:7px;margin-bottom:10px}
+.po-po{flex:1;padding:10px 6px;border:1px solid var(--bd);border-radius:8px;background:#fff;cursor:pointer;text-align:center;font-size:.78rem;font-weight:600;color:var(--t2);transition:border-color .2s,background .2s,color .2s;min-height:40px}
+.po-po.on{border-color:var(--p);background:var(--p);color:#fff}
+.po-note{background:var(--bg2);border-radius:8px;padding:11px 13px;font-size:.75rem;color:var(--t2);line-height:1.5;margin-bottom:14px}
+.po-skip{width:100%;background:none;border:none;color:var(--t2);font-size:.8rem;padding:10px;cursor:pointer;text-decoration:underline;min-height:44px}
+.po-chip{display:inline-block;background:rgba(107,45,138,.1);color:var(--p);font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:9px;margin-left:6px}
+
 /* ── UTIL BUTTONS ── */
 .btn-full{width:100%;height:52px;background:var(--p);color:#fff;border:none;border-radius:8px;font-size:.92rem;font-weight:600;min-height:44px}
 .btn-full:active{opacity:.8}
@@ -526,6 +558,32 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
   </div>
 </div>
 
+
+<!-- PRE-ORDER -->
+<div class="screen" id="preorderApp">
+  <div class="top-bar" style="display:flex">
+    <button class="tb-back" onclick="poSkip()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="tb-title">Order ahead</div>
+    <div style="width:40px"></div>
+  </div>
+  <div class="po-wrap">
+    <div class="po-h">Want it waiting for you?</div>
+    <div class="po-sub" id="poSub">Order ahead and it'll be ready as you sit down.</div>
+
+    <div class="po-modes" id="poModes"></div>
+    <div id="poMenu"></div>
+  </div>
+
+  <div class="po-bar" id="poBar" style="display:none">
+    <div class="po-tot"><span class="po-tl" id="poCount">0 items</span><span class="po-tv" id="poTotal">£0.00</span></div>
+    <div class="po-pay" id="poPay"></div>
+    <button class="btn-full" onclick="submitPreorder()" id="poSubmit">Confirm pre-order</button>
+  </div>
+  <div style="position:fixed;left:0;right:0;bottom:0;padding:10px 18px;background:#fff;border-top:1px solid var(--bd);z-index:59" id="poSkipBar">
+    <button class="po-skip" onclick="poSkip()">No thanks — we'll order when we arrive</button>
+  </div>
+</div>
+
 <!-- LOYALTY APP -->
 <div class="screen" id="loyaltyApp">
   <div class="top-bar" style="display:flex">
@@ -645,8 +703,9 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const VENUE='dancing-cup';
 
 /* ── SUPABASE ── */
-async function sbq(method,path,body){
+async function sbq(method,path,body,extraHeaders){
   const h={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+  if(extraHeaders) Object.assign(h, extraHeaders);
   if(method==='POST')h['Prefer']='return=representation';
   const r=await fetch(SB_URL+path,{method,headers:h,body:body?JSON.stringify(body):undefined});
   if(r.status===204||r.status===201&&method!=='POST')return null;
@@ -740,11 +799,12 @@ async function submitBooking(){
     return fail('Sorry — that slot just filled up. Please pick another time.');
   }
 
+  let created;
   try{
-    await sbq('POST','/rest/v1/ls_bookings',{
+    created = await sbq('POST','/rest/v1/ls_bookings',{
       venue:VENUE,name,phone,email:email||null,party_size:BK.party,
       booking_date:BK.date,booking_time:BK.time+':00',notes:notes||null,status:'confirmed'
-    });
+    },{'Prefer':'return=representation'});
   }catch(e){
     btn.disabled=false; btn.textContent='Confirm booking';
     return fail('Could not save the booking. Please try again.');
@@ -752,18 +812,185 @@ async function submitBooking(){
 
   if(email) await addPoints(email,25,'Table booking');
 
-  const d=new Date(BK.date+'T'+BK.time);
-  document.getElementById('bkCard').innerHTML=
-    '<div class="bk-row"><span class="bk-rk">Name</span><span class="bk-rv">'+name+'</span></div>'+
-    '<div class="bk-row"><span class="bk-rk">Party</span><span class="bk-rv">'+BK.party+(BK.party===6?'+':'')+' people</span></div>'+
-    '<div class="bk-row"><span class="bk-rk">Date</span><span class="bk-rv">'+d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+'</span></div>'+
-    '<div class="bk-row"><span class="bk-rk">Time</span><span class="bk-rv">'+BK.time+'</span></div>';
-  document.getElementById('bkCs').textContent = email
-    ? "We've got you down — and added 25 reward points."
-    : "We've got you down. See you soon.";
-  document.getElementById('bkForm').style.display='none';
-  document.getElementById('bkConf').style.display='';
   btn.disabled=false; btn.textContent='Confirm booking';
+  const newId = (created && created[0] && created[0].id) ? created[0].id : null;
+  const bookingObj = { name:name, party:BK.party, date:BK.date, time:BK.time, email:email };
+  if(newId){ startPreorder(newId, bookingObj); return; }
+  PO.booking = bookingObj;
+  showBookingConfirm(false, 0);
+  return;
+
+}
+
+
+/* ══════════ BOOKING PRE-ORDER ══════════ */
+const PO = { bookingId:null, mode:null, items:{}, payment:'on_arrival', booking:null };
+
+const PO_MODES = [
+  { id:'drinks', icon:'\u{1F377}', label:'Drinks only',  desc:'On the table when you arrive' },
+  { id:'full',   icon:'\u{1F37D}\uFE0F', label:'Full order', desc:'Food and drinks, kitchen prepped' }
+];
+
+function startPreorder(bookingId, booking){
+  PO.bookingId = bookingId;
+  PO.booking = booking;
+  PO.mode = null; PO.items = {}; PO.payment = 'on_arrival';
+  setScreen('preorderApp');
+  const d = new Date(booking.date + 'T' + booking.time);
+  document.getElementById('poSub').textContent =
+    'Table for ' + booking.party + ' on ' +
+    d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}) +
+    ' at ' + booking.time + '. Order ahead and it\u2019ll be ready as you sit down.';
+  buildModes();
+  document.getElementById('poMenu').innerHTML = '';
+  document.getElementById('poBar').style.display = 'none';
+  document.getElementById('poSkipBar').style.display = '';
+}
+
+function buildModes(){
+  const w = document.getElementById('poModes'); w.innerHTML = '';
+  PO_MODES.forEach(m => {
+    const b = document.createElement('button');
+    b.className = 'po-mode' + (PO.mode === m.id ? ' on' : '');
+    b.innerHTML = '<div class="po-mi">' + m.icon + '</div><div class="po-ml">' + m.label +
+                  '</div><div class="po-md">' + m.desc + '</div>';
+    b.onclick = () => { PO.mode = m.id; PO.items = {}; buildModes(); buildPoMenu(); poRecalc(); };
+    w.appendChild(b);
+  });
+}
+
+function buildPoMenu(){
+  const w = document.getElementById('poMenu'); w.innerHTML = '';
+  if(!PO.mode) return;
+
+  Object.entries(CATS).forEach(([cat, data]) => {
+    // drinks mode: only drink categories. full mode: everything.
+    if(PO.mode === 'drinks' && data.type !== 'drink') return;
+
+    const items = data.items.filter(it => {
+      if(PO.mode !== 'drinks') return true;
+      return !(it.type === 'food');
+    });
+    if(!items.length) return;
+
+    const h = document.createElement('div');
+    h.className = 'po-cat'; h.textContent = cat;
+    w.appendChild(h);
+
+    items.forEach(it => {
+      const row = document.createElement('div');
+      row.className = 'po-item';
+      const q = PO.items[it.id] ? PO.items[it.id].qty : 0;
+      row.innerHTML =
+        '<div class="po-in"><div class="po-nm">' + it.name + '</div>' +
+        (it.desc ? '<div class="po-ds">' + it.desc + '</div>' : '') +
+        '<div class="po-pr">\u00a3' + it.price.toFixed(2) + '</div></div>';
+      const ctl = document.createElement('div');
+      ctl.className = 'po-ctl';
+      if(q > 0){
+        const minus = document.createElement('button');
+        minus.className = 'po-btn'; minus.textContent = '\u2212';
+        minus.onclick = () => poAdd(it, -1);
+        const qty = document.createElement('span');
+        qty.className = 'po-qty'; qty.textContent = q;
+        ctl.append(minus, qty);
+      }
+      const plus = document.createElement('button');
+      plus.className = 'po-btn add'; plus.textContent = '+';
+      plus.onclick = () => poAdd(it, 1);
+      ctl.appendChild(plus);
+      row.appendChild(ctl);
+      w.appendChild(row);
+    });
+  });
+}
+
+function poAdd(item, delta){
+  const cur = PO.items[item.id] ? PO.items[item.id].qty : 0;
+  const next = cur + delta;
+  if(next <= 0) delete PO.items[item.id];
+  else PO.items[item.id] = { id:item.id, name:item.name, price:item.price, qty:next };
+  buildPoMenu(); poRecalc();
+}
+
+function poTotals(){
+  let n = 0, t = 0;
+  Object.values(PO.items).forEach(i => { n += i.qty; t += i.price * i.qty; });
+  return { count:n, total:t };
+}
+
+function poRecalc(){
+  const { count, total } = poTotals();
+  const bar = document.getElementById('poBar');
+  const skip = document.getElementById('poSkipBar');
+  if(count === 0){ bar.style.display = 'none'; skip.style.display = ''; return; }
+  bar.style.display = ''; skip.style.display = 'none';
+  document.getElementById('poCount').textContent = count + (count === 1 ? ' item' : ' items');
+  document.getElementById('poTotal').textContent = '\u00a3' + total.toFixed(2);
+  buildPayOpts();
+}
+
+function buildPayOpts(){
+  const opts = [
+    { id:'on_arrival', l:'Pay at the table' },
+    { id:'prepaid',    l:'Pay now' }
+  ];
+  const w = document.getElementById('poPay'); w.innerHTML = '';
+  opts.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'po-po' + (PO.payment === o.id ? ' on' : '');
+    b.textContent = o.l;
+    b.onclick = () => { PO.payment = o.id; buildPayOpts(); };
+    w.appendChild(b);
+  });
+}
+
+async function submitPreorder(){
+  const { total } = poTotals();
+  const btn = document.getElementById('poSubmit');
+  btn.disabled = true; btn.textContent = 'Saving\u2026';
+  try{
+    await sbq('POST','/rest/v1/ls_booking_preorders',{
+      venue: VENUE,
+      booking_id: PO.bookingId,
+      items: Object.values(PO.items),
+      total: total,
+      payment: PO.payment,
+      status: 'pending'
+    });
+  }catch(e){
+    btn.disabled = false; btn.textContent = 'Confirm pre-order';
+    alert('Could not save your pre-order. Please try again.');
+    return;
+  }
+  if(PO.booking && PO.booking.email){
+    try{ await addPoints(PO.booking.email, Math.floor(total * PTS_PER_POUND), 'Pre-order'); }catch(e){}
+  }
+  btn.disabled = false; btn.textContent = 'Confirm pre-order';
+  showBookingConfirm(true, total);
+}
+
+function poSkip(){ showBookingConfirm(false, 0); }
+
+function showBookingConfirm(withPreorder, poTotal){
+  const b = PO.booking;
+  setScreen('bookingApp');
+  const d = new Date(b.date + 'T' + b.time);
+  let html =
+    '<div class="bk-row"><span class="bk-rk">Name</span><span class="bk-rv">' + b.name + '</span></div>' +
+    '<div class="bk-row"><span class="bk-rk">Party</span><span class="bk-rv">' + b.party + (b.party === 6 ? '+' : '') + ' people</span></div>' +
+    '<div class="bk-row"><span class="bk-rk">Date</span><span class="bk-rv">' + d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-rk">Time</span><span class="bk-rv">' + b.time + '</span></div>';
+  if(withPreorder){
+    html += '<div class="bk-row"><span class="bk-rk">Pre-order</span><span class="bk-rv">\u00a3' + poTotal.toFixed(2) +
+            ' <span class="po-chip">' + (PO.payment === 'prepaid' ? 'Paid' : 'Pay at table') + '</span></span></div>';
+  }
+  document.getElementById('bkCard').innerHTML = html;
+  document.getElementById('bkCs').textContent = withPreorder
+    ? 'Booked, and your order is with the kitchen. It\u2019ll be ready as you sit down.'
+    : (b.email ? 'We\u2019ve got you down \u2014 and added 25 reward points.' : 'We\u2019ve got you down. See you soon.');
+  document.getElementById('bkForm').style.display = 'none';
+  document.getElementById('bkConf').style.display = '';
 }
 
 /* ══════════ LOYALTY ══════════ */
@@ -966,7 +1193,7 @@ function setScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   const btn=document.getElementById('swBtn');
-  const noSw=['roleScreen','bookingApp','loyaltyApp'];
+  const noSw=['roleScreen','bookingApp','loyaltyApp','preorderApp'];
   btn.className='sw-btn'+(noSw.indexOf(id)===-1?' on':'');
 }
 
@@ -1454,6 +1681,8 @@ async function loadAdminTab(tab){
   }else if(tab==='bookings'){
     const today=new Date().toISOString().slice(0,10);
     const data=await sbq('GET','/rest/v1/ls_bookings?venue=eq.'+VENUE+'&booking_date=gte.'+today+'&order=booking_date.asc,booking_time.asc&limit=100&select=*',null)||[];
+    const pres=await sbq('GET','/rest/v1/ls_booking_preorders?venue=eq.'+VENUE+'&select=*',null)||[];
+    const preMap={}; pres.forEach(p=>{preMap[p.booking_id]=p;});
     if(!data.length){body.innerHTML='<div class="st-empty">No upcoming bookings</div>';return;}
     const covers=data.filter(b=>b.booking_date===today).reduce((s,b)=>s+b.party_size,0);
     body.innerHTML='<div class="stat-grid"><div class="stat-card"><div class="sc-val">'+data.filter(b=>b.booking_date===today).length+'</div><div class="sc-lbl">Bookings today</div></div><div class="stat-card"><div class="sc-val">'+covers+'</div><div class="sc-lbl">Covers today</div></div></div>';
@@ -1470,6 +1699,7 @@ async function loadAdminTab(tab){
       div.innerHTML='<div class="oh-head"><div class="oh-ref">'+b.booking_time.slice(0,5)+' — '+b.name+'</div><div class="oh-time">'+b.party_size+' covers</div></div>'+
         '<div class="oh-detail">'+(b.phone||'')+(b.email?' · '+b.email:'')+'</div>'+
         (b.notes?'<div class="oh-detail">“'+b.notes+'”</div>':'')+
+        (preMap[b.id]?'<div class="oh-detail" style="color:var(--p);font-weight:600">Pre-order · £'+parseFloat(preMap[b.id].total).toFixed(2)+' · '+(preMap[b.id].payment==='prepaid'?'PAID':'pay at table')+'<br>'+(preMap[b.id].items||[]).map(function(i){return i.qty+'× '+i.name;}).join(', ')+'</div>':'')+
         '<span class="oh-status '+(b.status==='confirmed'?'active':'completed')+'">'+b.status+'</span>';
       body.appendChild(div);
     });
