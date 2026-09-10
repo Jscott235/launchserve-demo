@@ -2077,7 +2077,14 @@ async function loadAdminTab(tab){
       const payLabel=o.payment==='now'?'Paid':(o.payment==='cash'?'Cash on delivery':'Pay at counter');
       let stageBadge='';
       if(isDel&&o.status!=='refunded'){
-        const stage=o.status==='completed'?'Delivered':(o.dispatched_at?'Out for delivery':'Preparing');
+        let fi=o.food_items;if(typeof fi==='string')try{fi=JSON.parse(fi);}catch(e){fi=[];}
+        let di=o.drink_items;if(typeof di==='string')try{di=JSON.parse(di);}catch(e){di=[];}
+        const foodReady=!(Array.isArray(fi)&&fi.length)||o.food_status==='ready'||o.food_status==='none';
+        const drinkReady=!(Array.isArray(di)&&di.length)||o.drink_status==='ready'||o.drink_status==='none';
+        let stage='Preparing';
+        if(o.status==='completed')stage='Delivered';
+        else if(o.dispatched_at)stage='Out for delivery';
+        else if(foodReady&&drinkReady)stage='Ready';
         stageBadge=' · <strong>'+stage+'</strong>';
       }
       div.innerHTML='<div class="oh-head"><div class="oh-ref">#'+o.id+' — '+label+'</div><div class="oh-time">'+t+'</div></div><div class="oh-detail">'+((Array.isArray(items)?items:[])).map(i=>i.q+'× '+i.n).join(', ')+'</div><div class="oh-detail">£'+parseFloat(o.total).toFixed(2)+' · '+payLabel+(isDel?' · '+o.delivery_name+' · '+o.delivery_phone:'')+(o.customer_email?' · '+o.customer_email:'')+stageBadge+'</div><span class="oh-status '+(o.status==='completed'?'completed':'active')+'">'+o.status+'</span>';
