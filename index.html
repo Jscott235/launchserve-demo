@@ -82,8 +82,8 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
 .loc-spinner{width:36px;height:36px;border:3px solid var(--bdr);border-top-color:var(--p);border-radius:50%;animation:locSpin .8s linear infinite;margin:8px auto 20px}
 @keyframes locSpin{to{transform:rotate(360deg)}}
 .loc-fallback{font-size:.78rem;color:var(--mut);margin-bottom:14px;margin-top:-8px}
-.loc-choice{display:flex;gap:14px;width:100%;max-width:320px}
-.loc-btn{flex:1;background:#fff;border:1.5px solid var(--bdr);border-radius:12px;padding:20px 10px;min-height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.loc-choice{display:flex;gap:10px;width:100%;max-width:360px}
+.loc-btn{flex:1;background:#fff;border:1.5px solid var(--bdr);border-radius:12px;padding:16px 6px;min-height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
 .loc-btn:active{border-color:var(--p);background:var(--gold-d)}
 .loc-btn-ic{font-size:1.8rem}
 .loc-btn-lbl{font-size:.85rem;font-weight:700;color:var(--txt)}
@@ -523,6 +523,7 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
     <div class="loc-choice" id="locChoice" style="display:none">
       <button class="loc-btn" onclick="chooseEatIn()"><div class="loc-btn-ic">🍽️</div><div class="loc-btn-lbl">Eat in</div></button>
       <button class="loc-btn" onclick="chooseTakeaway()"><div class="loc-btn-ic">🥡</div><div class="loc-btn-lbl">Takeaway</div></button>
+      <button class="loc-btn" onclick="chooseDeliveryFromLocate()"><div class="loc-btn-ic">🚚</div><div class="loc-btn-lbl">Delivery</div></button>
     </div>
   </div>
 
@@ -1533,6 +1534,12 @@ function chooseTakeaway(){
   orderMode='takeaway';
   takeawayInfo=null;
   goView('takeawayView');
+}
+
+function chooseDeliveryFromLocate(){
+  orderMode='delivery';
+  deliveryInfo=null;
+  goView('addressView');
 }
 
 function haversineMeters(lat1,lon1,lat2,lon2){
