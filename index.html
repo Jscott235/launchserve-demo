@@ -79,6 +79,14 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
 .wb-val{font-size:1.3rem;font-weight:700;color:var(--p)}
 .wb-desc{font-size:.65rem;color:var(--mut)}
 .tv-prompt{font-size:.85rem;color:var(--mut);margin-bottom:20px}
+.loc-spinner{width:36px;height:36px;border:3px solid var(--bdr);border-top-color:var(--p);border-radius:50%;animation:locSpin .8s linear infinite;margin:8px auto 20px}
+@keyframes locSpin{to{transform:rotate(360deg)}}
+.loc-fallback{font-size:.78rem;color:var(--mut);margin-bottom:14px;margin-top:-8px}
+.loc-choice{display:flex;gap:14px;width:100%;max-width:320px}
+.loc-btn{flex:1;background:#fff;border:1.5px solid var(--bdr);border-radius:12px;padding:20px 10px;min-height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.loc-btn:active{border-color:var(--p);background:var(--gold-d)}
+.loc-btn-ic{font-size:1.8rem}
+.loc-btn-lbl{font-size:.85rem;font-weight:700;color:var(--txt)}
 .tv-input{height:64px;width:120px;border:1.5px solid var(--bdr);border-radius:8px;font-size:2rem;font-weight:700;text-align:center;color:var(--txt);background:#fff;outline:none}
 .tv-input:focus{border-color:var(--p)}
 .btn-go{margin-top:14px;height:52px;width:120px;background:var(--p);color:#fff;border:none;border-radius:8px;font-size:.92rem;font-weight:600}
@@ -155,8 +163,12 @@ button{cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
 /* ── EMAIL + PAYMENT ── */
 #payView{display:none;background:var(--bg);flex-direction:column;min-height:100vh}
 #payView.on{display:flex}
+#locateView{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center}
+#locateView.on{display:flex}
 #addressView{display:none;background:var(--bg);flex-direction:column;min-height:100vh}
 #addressView.on{display:flex}
+#takeawayView{display:none;background:var(--bg);flex-direction:column;min-height:100vh}
+#takeawayView.on{display:flex}
 .pay-body{padding:24px;flex:1}
 .pay-title{font-size:1.3rem;font-weight:700;color:var(--txt);margin-bottom:6px;letter-spacing:-.02em}
 .pay-sub{font-size:.82rem;color:var(--mut);margin-bottom:24px;line-height:1.5}
@@ -464,6 +476,7 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
       <div class="role-tag">Cafe &hearts; Coffee &hearts; Community</div>
     </div>
     <div class="role-cards">
+      <button class="role-card" onclick="showOrderNow()"><div class="rc-info"><div class="rc-name">📍 Order now</div><div class="rc-desc">We'll check if you're at the restaurant</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showCustomer()"><div class="rc-info"><div class="rc-name">Customer ordering</div><div class="rc-desc">Browse the menu and order to your table</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showDelivery()"><div class="rc-info"><div class="rc-name">Delivery ordering</div><div class="rc-desc">Order for delivery to an address</div></div><div class="rc-arr">›</div></button>
       <button class="role-card" onclick="showBooking()"><div class="rc-info"><div class="rc-name">Book a table</div><div class="rc-desc">Reserve a table for any day this month</div></div><div class="rc-arr">›</div></button>
@@ -500,6 +513,19 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
     <button class="btn-go" onclick="startOrder()">Continue</button>
   </div>
 
+  <div id="locateView">
+    <div class="tv-logo"><img src="https://launchserve-demo.pages.dev/icon-192.png" alt=""></div>
+    <div class="tv-name ds">The Dancing Cup</div>
+    <div class="tv-tag">Cafe &hearts; Coffee &hearts; Community</div>
+    <div class="loc-spinner" id="locSpinner"></div>
+    <div class="tv-prompt" id="locStatus" style="max-width:280px">Checking your location…</div>
+    <div class="loc-fallback" id="locFallbackNote" style="display:none">You can still tell us how you're ordering:</div>
+    <div class="loc-choice" id="locChoice" style="display:none">
+      <button class="loc-btn" onclick="chooseEatIn()"><div class="loc-btn-ic">🍽️</div><div class="loc-btn-lbl">Eat in</div></button>
+      <button class="loc-btn" onclick="chooseTakeaway()"><div class="loc-btn-ic">🥡</div><div class="loc-btn-lbl">Takeaway</div></button>
+    </div>
+  </div>
+
   <div id="addressView">
     <div class="pay-body">
       <div class="pay-title">Delivery details</div>
@@ -513,6 +539,19 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
     </div>
     <div class="pay-foot" style="justify-content:center">
       <button class="btn-full" onclick="startDelivery()">Continue to menu →</button>
+    </div>
+  </div>
+
+  <div id="takeawayView">
+    <div class="pay-body">
+      <div class="pay-title">Takeaway details</div>
+      <div class="pay-sub">Just need a name for the order — we'll have it ready to collect.</div>
+      <div class="email-field"><div class="ef-label">Name for the order</div><input class="ef-input" type="text" id="taName" placeholder="Jane Smith" autocomplete="name"></div>
+      <div class="email-field"><div class="ef-label">Mobile number (optional)</div><input class="ef-input" type="tel" id="taPhone" placeholder="07123 456789" autocomplete="tel"></div>
+      <div class="ef-hint" id="taError" style="display:none;color:var(--red)">Please enter a name for the order.</div>
+    </div>
+    <div class="pay-foot" style="justify-content:center">
+      <button class="btn-full" onclick="startTakeaway()">Continue to menu →</button>
     </div>
   </div>
 
@@ -583,6 +622,17 @@ textarea.bk-in{height:76px;padding:12px 14px;resize:none}
         <div class="trk-step" id="trkStep4"><div class="trk-dot"><svg class="trk-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="trk-label">Delivered</div></div>
       </div>
       <div class="trk-status" id="trkStatus">Preparing your order…</div>
+    </div>
+
+    <div class="trk-wrap" id="trkTAWrap" style="display:none">
+      <div class="trk-steps">
+        <div class="trk-step" id="trkTAStep0"><div class="trk-dot"><svg class="trk-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="trk-label">Received</div></div>
+        <div class="trk-line" id="trkTALine0"></div>
+        <div class="trk-step" id="trkTAStep1"><div class="trk-dot"><svg class="trk-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="trk-label">Preparing</div></div>
+        <div class="trk-line" id="trkTALine1"></div>
+        <div class="trk-step" id="trkTAStep2"><div class="trk-dot"><svg class="trk-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="trk-label">Ready to collect</div></div>
+      </div>
+      <div class="trk-status" id="trkTAStatus">Preparing your order…</div>
     </div>
 
     <div class="cv-table"><div class="cv-tl" id="cvTableLabel">Table</div><div class="cv-tv" id="cvTable" style="font-size:1.1rem;line-height:1.4">—</div></div>
@@ -1448,8 +1498,10 @@ const CATS={
 
 /* ── STATE ── */
 let tableNum='',basket=[],selPay_='now',curItem=null,curQty=1,curChoices=[];
-let orderMode='dine-in',deliveryInfo=null,deliveryTrackTimer=null;
+let orderMode='dine-in',deliveryInfo=null,takeawayInfo=null,deliveryTrackTimer=null;
 const DELIVERY_FEE=2.50;
+// Venue coordinates for the "Order now" location check — update to the real premises before going live.
+const VENUE_LAT=54.6740,VENUE_LNG=-1.1990,GEOFENCE_METERS=120;
 let curCat=Object.keys(CATS)[0];
 let amEditId=null,amEditCat=null,amNextId=200;
 let stChannel=null,adminTab_='stats';
@@ -1463,6 +1515,65 @@ function goRoles(){
 }
 function showCustomer(){orderMode='dine-in';deliveryInfo=null;setScreen('customerApp');goView('tableView');loadWaitTimes();}
 function showDelivery(){orderMode='delivery';deliveryInfo=null;basket=[];setScreen('customerApp');goView('addressView');}
+
+function showOrderNow(){
+  basket=[];
+  setScreen('customerApp');
+  goView('locateView');
+  detectLocation();
+}
+
+function chooseEatIn(){
+  orderMode='dine-in';
+  goView('tableView');
+  loadWaitTimes();
+}
+
+function chooseTakeaway(){
+  orderMode='takeaway';
+  takeawayInfo=null;
+  goView('takeawayView');
+}
+
+function haversineMeters(lat1,lon1,lat2,lon2){
+  const R=6371000,toRad=d=>d*Math.PI/180;
+  const dLat=toRad(lat2-lat1),dLon=toRad(lon2-lon1);
+  const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+
+function detectLocation(){
+  const statusEl=document.getElementById('locStatus');
+  const spinner=document.getElementById('locSpinner');
+  const fallback=document.getElementById('locFallbackNote');
+  const choice=document.getElementById('locChoice');
+  statusEl.textContent='Checking your location…';
+  spinner.style.display='block';
+  fallback.style.display='none';
+  choice.style.display='none';
+  function showChoice(msg,showFallback){
+    spinner.style.display='none';
+    statusEl.textContent=msg;
+    fallback.style.display=showFallback?'block':'none';
+    choice.style.display='flex';
+  }
+  if(!('geolocation' in navigator)){
+    showChoice("Location isn't available on this device — how are you ordering?",true);
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const dist=haversineMeters(pos.coords.latitude,pos.coords.longitude,VENUE_LAT,VENUE_LNG);
+      if(dist<=GEOFENCE_METERS){
+        showChoice("You're at The Dancing Cup! How would you like to order?",false);
+      }else{
+        showChoice("Doesn't look like you're at the restaurant yet — how would you like to order?",true);
+      }
+    },
+    ()=>{ showChoice("Couldn't get your location — how would you like to order?",true); },
+    {timeout:8000,maximumAge:60000}
+  );
+}
 function showKitchen(){setScreen('kitchenApp');loadStation('kitchen');}
 function showBar(){setScreen('barApp');loadStation('bar');}
 function showAdmin(){setScreen('adminApp');loadAdminTab('stats');}
@@ -1476,14 +1587,14 @@ function setScreen(id){
 }
 
 function goView(id){
-  ['tableView','addressView','menuView','basketView','payView','confirmView'].forEach(v=>{
+  ['tableView','addressView','locateView','takeawayView','menuView','basketView','payView','confirmView'].forEach(v=>{
     const el=document.getElementById(v);
     el.classList.remove('on');el.style.display='';
   });
   document.getElementById(id).classList.add('on');
   const bar=document.getElementById('custTopBar');
-  const titles={tableView:'',addressView:'Delivery details',menuView:'Menu',basketView:'Your order',payView:'Payment',confirmView:''};
-  const noBar=id==='tableView'||id==='addressView';
+  const titles={tableView:'',addressView:'Delivery details',locateView:'',takeawayView:'Takeaway details',menuView:'Menu',basketView:'Your order',payView:'Payment',confirmView:''};
+  const noBar=id==='tableView'||id==='addressView'||id==='locateView'||id==='takeawayView';
   bar.style.display=noBar?'none':'flex';
   if(!noBar)document.getElementById('tbTitle').textContent=titles[id]||'';
   if(id==='payView')preparePayView();
@@ -1491,7 +1602,12 @@ function goView(id){
 }
 
 function custBack(){
-  const views=orderMode==='delivery'?['addressView','menuView','basketView','payView','confirmView']:['tableView','menuView','basketView','payView','confirmView'];
+  const modeViews={
+    'delivery':['addressView','menuView','basketView','payView','confirmView'],
+    'takeaway':['takeawayView','menuView','basketView','payView','confirmView'],
+    'dine-in':['tableView','menuView','basketView','payView','confirmView']
+  };
+  const views=modeViews[orderMode]||modeViews['dine-in'];
   const cur=views.find(v=>document.getElementById(v).classList.contains('on'));
   const i=views.indexOf(cur);
   if(i>0)goView(views[i-1]);
@@ -1545,11 +1661,27 @@ function startDelivery(){
   renderMenu();goView('menuView');
 }
 
+function startTakeaway(){
+  const name=document.getElementById('taName').value.trim();
+  const phone=document.getElementById('taPhone').value.trim();
+  if(!name){document.getElementById('taError').style.display='block';return;}
+  document.getElementById('taError').style.display='none';
+  takeawayInfo={name,phone:phone||null};
+  document.getElementById('menuModePill').textContent='TAKEAWAY';
+  document.getElementById('cvTableLabel').textContent='Order name';
+  document.getElementById('cvTable').textContent=name;
+  renderMenu();goView('menuView');
+}
+
 function preparePayView(){
   if(orderMode==='delivery'){
     document.getElementById('payNowDesc').textContent='Google Pay, Apple Pay or card — secure and instant';
     document.getElementById('payCounterName').textContent='Cash on delivery';
     document.getElementById('payCounterDesc').textContent='Pay the driver in cash when your order arrives.';
+  }else if(orderMode==='takeaway'){
+    document.getElementById('payNowDesc').textContent='Google Pay, Apple Pay or card — secure and instant';
+    document.getElementById('payCounterName').textContent='Pay on collection';
+    document.getElementById('payCounterDesc').textContent="We'll get started — pay at the counter when you collect.";
   }else{
     document.getElementById('payNowDesc').textContent='Google Pay, Apple Pay or card — secure and instant';
     document.getElementById('payCounterName').textContent='Pay at counter';
@@ -1688,20 +1820,22 @@ async function placeOrder(){
   const foodItems=allItems.filter(i=>i.type==='food');
   const drinkItems=allItems.filter(i=>i.type==='drink');
   const isDelivery=orderMode==='delivery';
+  const isTakeaway=orderMode==='takeaway';
   const fee=isDelivery?DELIVERY_FEE:0;
   const total=basket.reduce((s,i)=>s+i.price*i.qty,0)+fee;
   const email=document.getElementById('emailInput').value.trim()||null;
   const payment=isDelivery?(selPay_==='now'?'now':'cash'):selPay_;
 
   const order={
-    id:ref,venue:VENUE,table_num:isDelivery?'Delivery':String(tableNum),
-    order_type:isDelivery?'delivery':'dine-in',
+    id:ref,venue:VENUE,
+    table_num:isDelivery?'Delivery':(isTakeaway?'Takeaway':String(tableNum)),
+    order_type:isDelivery?'delivery':(isTakeaway?'takeaway':'dine-in'),
     items:allItems,food_items:foodItems,drink_items:drinkItems,
     total,payment,customer_email:email,
     status:'active',food_status:foodItems.length?'active':'none',
     drink_status:drinkItems.length?'active':'none',
-    delivery_name:isDelivery?deliveryInfo.name:null,
-    delivery_phone:isDelivery?deliveryInfo.phone:null,
+    delivery_name:isDelivery?deliveryInfo.name:(isTakeaway?takeawayInfo.name:null),
+    delivery_phone:isDelivery?deliveryInfo.phone:(isTakeaway?takeawayInfo.phone:null),
     delivery_address:isDelivery?deliveryInfo.address:null,
     delivery_postcode:isDelivery?deliveryInfo.postcode:null,
     delivery_notes:isDelivery?(deliveryInfo.notes||null):null,
@@ -1727,6 +1861,9 @@ async function placeOrder(){
   if(isDelivery){
     document.getElementById('cvTitle').textContent=payment==='now'?'Payment confirmed':'Order sent';
     document.getElementById('cvSub').textContent=payment==='now'?'Your order is on its way — usually 30-40 minutes.':'Your order is confirmed — have cash ready for the driver. Usually 30-40 minutes.';
+  }else if(isTakeaway){
+    document.getElementById('cvTitle').textContent=payment==='now'?'Payment confirmed':'Order sent';
+    document.getElementById('cvSub').textContent=payment==='now'?"We're getting started — see you soon!":"We'll get started — pay at the counter when you collect.";
   }else if(selPay_==='counter'){
     document.getElementById('cvTitle').textContent='Order sent';
     document.getElementById('cvSub').textContent='Your order is confirmed. Come up to pay when you\'re ready.';
@@ -1735,11 +1872,15 @@ async function placeOrder(){
     document.getElementById('cvSub').textContent='Your order is with us. We\'ll bring it to your table shortly.';
   }
   basket=[];updateCount();goView('confirmView');
+  document.getElementById('trkWrap').style.display='none';
+  document.getElementById('trkTAWrap').style.display='none';
   if(isDelivery){
     document.getElementById('trkWrap').style.display='block';
     startDeliveryTracker(ref);
+  }else if(isTakeaway){
+    document.getElementById('trkTAWrap').style.display='block';
+    startTakeawayTracker(ref);
   }else{
-    document.getElementById('trkWrap').style.display='none';
     // Request notification permission then start polling
     requestNotifPermission().then(()=>startOrderReadyPoll(ref));
   }
@@ -1781,6 +1922,47 @@ function startDeliveryTracker(orderId){
       else if(foodReady&&drinkReady)stage=2;
       renderTrackStage(stage);
       if(stage===4){clearInterval(deliveryTrackTimer);deliveryTrackTimer=null;}
+    }catch(e){}
+  }
+  poll();
+  deliveryTrackTimer=setInterval(poll,4000);
+}
+
+function renderTrackStageTA(stage){
+  const doneUpTo=stage===3?2:stage-1;
+  const current=stage===3?-1:stage;
+  for(let i=0;i<=2;i++){
+    const step=document.getElementById('trkTAStep'+i);
+    step.classList.remove('done','current');
+    if(i<=doneUpTo)step.classList.add('done');
+    else if(i===current)step.classList.add('current');
+  }
+  for(let i=0;i<2;i++){
+    document.getElementById('trkTALine'+i).classList.toggle('done',i<=doneUpTo);
+  }
+  const statusText=['','Preparing your order…','Ready — come and collect!','Order collected — thank you!'];
+  document.getElementById('trkTAStatus').textContent=statusText[stage]||'';
+}
+
+function startTakeawayTracker(orderId){
+  if(deliveryTrackTimer){clearInterval(deliveryTrackTimer);deliveryTrackTimer=null;}
+  renderTrackStageTA(1);
+  async function poll(){
+    try{
+      const data=await sbq('GET','/rest/v1/ls_orders?id=eq.'+orderId+'&select=food_status,drink_status,food_items,drink_items,status',null);
+      if(!data||!data[0])return;
+      const o=data[0];
+      let fi=o.food_items;if(typeof fi==='string')try{fi=JSON.parse(fi);}catch(e){fi=[];}
+      let di=o.drink_items;if(typeof di==='string')try{di=JSON.parse(di);}catch(e){di=[];}
+      const hasFood=Array.isArray(fi)&&fi.length>0;
+      const hasDrink=Array.isArray(di)&&di.length>0;
+      const foodReady=!hasFood||o.food_status==='ready'||o.food_status==='none';
+      const drinkReady=!hasDrink||o.drink_status==='ready'||o.drink_status==='none';
+      let stage=1;
+      if(o.status==='completed')stage=3;
+      else if(foodReady&&drinkReady)stage=2;
+      renderTrackStageTA(stage);
+      if(stage===3){clearInterval(deliveryTrackTimer);deliveryTrackTimer=null;}
     }catch(e){}
   }
   poll();
@@ -1860,6 +2042,7 @@ function resetCustomer(){
   if(readyPollTimer){clearInterval(readyPollTimer);readyPollTimer=null;}
   if(deliveryTrackTimer){clearInterval(deliveryTrackTimer);deliveryTrackTimer=null;}
   document.getElementById('trkWrap').style.display='none';
+  document.getElementById('trkTAWrap').style.display='none';
   document.getElementById('readyBanner').classList.remove('on');
   if(orderMode==='delivery'){
     deliveryInfo=null;
@@ -1867,6 +2050,10 @@ function resetCustomer(){
     document.getElementById('delAddress').value='';document.getElementById('delPostcode').value='';
     document.getElementById('delNotes').value='';
     goView('addressView');
+  }else if(orderMode==='takeaway'){
+    takeawayInfo=null;
+    document.getElementById('taName').value='';document.getElementById('taPhone').value='';
+    goView('takeawayView');
   }else{
     tableNum='';document.getElementById('tableInput').value='';
     goView('tableView');loadWaitTimes();
@@ -1939,13 +2126,14 @@ function loadStation(station){
       if(status==='active')timers[o.id]=setInterval(updateTimer,1000);
 
       const isDel=o.order_type==='delivery';
+      const isTA=o.order_type==='takeaway';
       const head=document.createElement('div');head.className='oc-head';
-      head.innerHTML='<div><div class="oc-table">'+(isDel?'🚚 Delivery':'Table '+o.table_num)+'</div><div class="oc-id">#'+o.id+'</div></div>';
+      head.innerHTML='<div><div class="oc-table">'+(isDel?'🚚 Delivery':(isTA?'🥡 Takeaway':'Table '+o.table_num))+'</div><div class="oc-id">#'+o.id+'</div></div>';
       head.appendChild(timerEl);
 
       const payTag=document.createElement('div');
       payTag.className='oc-pay'+(o.payment==='now'?' paid':'');
-      payTag.textContent=o.payment==='now'?'Paid online':(o.payment==='cash'?'Cash on delivery':'Pay at counter');
+      payTag.textContent=o.payment==='now'?'Paid online':(o.payment==='cash'?'Cash on delivery':(isTA?'Pay on collection':'Pay at counter'));
 
       const itemsList=document.createElement('ul');itemsList.className='oc-items';
       items.forEach(i=>{const li=document.createElement('li');li.innerHTML='<span>'+i.q+'× '+i.n+'</span>';itemsList.appendChild(li);});
@@ -1966,6 +2154,7 @@ function loadStation(station){
 
       card.appendChild(head);card.appendChild(payTag);
       if(isDel){const n=document.createElement('div');n.className='oc-note';n.textContent=o.delivery_name+' · '+o.delivery_phone+' · '+o.delivery_address+', '+o.delivery_postcode+(o.delivery_notes?' · '+o.delivery_notes:'');card.appendChild(n);}
+      if(isTA){const n=document.createElement('div');n.className='oc-note';n.textContent=o.delivery_name+(o.delivery_phone?' · '+o.delivery_phone:'');card.appendChild(n);}
       if(o.note){const n=document.createElement('div');n.className='oc-note';n.textContent=o.note;card.appendChild(n);}
       card.appendChild(itemsList);card.appendChild(totalEl);card.appendChild(actions);
       grid.appendChild(card);
@@ -2025,7 +2214,7 @@ function renderClearedTray(station){
   cleared.forEach(o=>{
     const div=document.createElement('div');div.className='ct-item';
     const minsAgo=Math.floor((Date.now()-o.clearedAt)/60000);
-    div.innerHTML='<div class="ct-info"><strong>'+(o.order_type==='delivery'?'Delivery':'Table '+o.table_num)+' #'+o.id+'</strong> — cleared '+( minsAgo<1?'just now':minsAgo+'m ago')+'</div><button class="ct-restore" onclick="restoreOrder(\''+o.id+'\',\''+station+'\')">Restore</button>';
+    div.innerHTML='<div class="ct-info"><strong>'+(o.order_type==='delivery'?'Delivery':(o.order_type==='takeaway'?'Takeaway':'Table '+o.table_num))+' #'+o.id+'</strong> — cleared '+( minsAgo<1?'just now':minsAgo+'m ago')+'</div><button class="ct-restore" onclick="restoreOrder(\''+o.id+'\',\''+station+'\')">Restore</button>';
     items.appendChild(div);
   });
 }
@@ -2061,9 +2250,10 @@ async function loadAdminTab(tab){
     const rev=data.reduce((s,o)=>s+parseFloat(o.total),0);
     const active=data.filter(o=>o.status==='active').length;
     const delCount=data.filter(o=>o.order_type==='delivery').length;
+    const taCount=data.filter(o=>o.order_type==='takeaway').length;
     const fi=data.reduce((s,o)=>{let i=o.food_items;if(typeof i==='string')i=JSON.parse(i);return s+(Array.isArray(i)?i.length:0);},0);
     const di=data.reduce((s,o)=>{let i=o.drink_items;if(typeof i==='string')i=JSON.parse(i);return s+(Array.isArray(i)?i.length:0);},0);
-    body.innerHTML='<div class="admin-notice">Today\'s live data</div><div class="stat-grid"><div class="stat-card"><div class="sc-val">£'+rev.toFixed(2)+'</div><div class="sc-lbl">Revenue today</div></div><div class="stat-card"><div class="sc-val">'+data.length+'</div><div class="sc-lbl">Orders today</div></div><div class="stat-card"><div class="sc-val">'+active+'</div><div class="sc-lbl">Active now</div></div><div class="stat-card"><div class="sc-val">'+rev.toFixed(2)+'</div><div class="sc-lbl">Avg order £'+(data.length?((rev/data.length).toFixed(2)):'0')+'</div></div></div><div class="stat-grid"><div class="stat-card"><div class="sc-val">'+fi+'</div><div class="sc-lbl">Food items today</div></div><div class="stat-card"><div class="sc-val">'+di+'</div><div class="sc-lbl">Drink items today</div></div><div class="stat-card"><div class="sc-val">'+delCount+'</div><div class="sc-lbl">Delivery orders today</div></div></div>';
+    body.innerHTML='<div class="admin-notice">Today\'s live data</div><div class="stat-grid"><div class="stat-card"><div class="sc-val">£'+rev.toFixed(2)+'</div><div class="sc-lbl">Revenue today</div></div><div class="stat-card"><div class="sc-val">'+data.length+'</div><div class="sc-lbl">Orders today</div></div><div class="stat-card"><div class="sc-val">'+active+'</div><div class="sc-lbl">Active now</div></div><div class="stat-card"><div class="sc-val">'+rev.toFixed(2)+'</div><div class="sc-lbl">Avg order £'+(data.length?((rev/data.length).toFixed(2)):'0')+'</div></div></div><div class="stat-grid"><div class="stat-card"><div class="sc-val">'+fi+'</div><div class="sc-lbl">Food items today</div></div><div class="stat-card"><div class="sc-val">'+di+'</div><div class="sc-lbl">Drink items today</div></div></div><div class="stat-grid"><div class="stat-card"><div class="sc-val">'+delCount+'</div><div class="sc-lbl">Delivery orders today</div></div><div class="stat-card"><div class="sc-val">'+taCount+'</div><div class="sc-lbl">Takeaway orders today</div></div></div>';
   }else if(tab==='orders'){
     const data=await sbq('GET','/rest/v1/ls_orders?venue=eq.'+VENUE+'&order=created_at.desc&limit=50&select=*',null)||[];
     body.innerHTML='';
@@ -2073,21 +2263,22 @@ async function loadAdminTab(tab){
       const t=new Date(o.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       let items=o.items;if(typeof items==='string')try{items=JSON.parse(items);}catch(e){items=[];}
       const isDel=o.order_type==='delivery';
-      const label=isDel?'🚚 Delivery — '+o.delivery_address+', '+o.delivery_postcode:'Table '+o.table_num;
-      const payLabel=o.payment==='now'?'Paid':(o.payment==='cash'?'Cash on delivery':'Pay at counter');
+      const isTA=o.order_type==='takeaway';
+      const label=isDel?'🚚 Delivery — '+o.delivery_address+', '+o.delivery_postcode:(isTA?'🥡 Takeaway — '+o.delivery_name:'Table '+o.table_num);
+      const payLabel=o.payment==='now'?'Paid':(o.payment==='cash'?'Cash on delivery':(isTA?'Pay on collection':'Pay at counter'));
       let stageBadge='';
-      if(isDel&&o.status!=='refunded'){
+      if((isDel||isTA)&&o.status!=='refunded'){
         let fi=o.food_items;if(typeof fi==='string')try{fi=JSON.parse(fi);}catch(e){fi=[];}
         let di=o.drink_items;if(typeof di==='string')try{di=JSON.parse(di);}catch(e){di=[];}
         const foodReady=!(Array.isArray(fi)&&fi.length)||o.food_status==='ready'||o.food_status==='none';
         const drinkReady=!(Array.isArray(di)&&di.length)||o.drink_status==='ready'||o.drink_status==='none';
         let stage='Preparing';
-        if(o.status==='completed')stage='Delivered';
-        else if(o.dispatched_at)stage='Out for delivery';
-        else if(foodReady&&drinkReady)stage='Ready';
+        if(o.status==='completed')stage=isDel?'Delivered':'Collected';
+        else if(isDel&&o.dispatched_at)stage='Out for delivery';
+        else if(foodReady&&drinkReady)stage=isDel?'Ready':'Ready to collect';
         stageBadge=' · <strong>'+stage+'</strong>';
       }
-      div.innerHTML='<div class="oh-head"><div class="oh-ref">#'+o.id+' — '+label+'</div><div class="oh-time">'+t+'</div></div><div class="oh-detail">'+((Array.isArray(items)?items:[])).map(i=>i.q+'× '+i.n).join(', ')+'</div><div class="oh-detail">£'+parseFloat(o.total).toFixed(2)+' · '+payLabel+(isDel?' · '+o.delivery_name+' · '+o.delivery_phone:'')+(o.customer_email?' · '+o.customer_email:'')+stageBadge+'</div><span class="oh-status '+(o.status==='completed'?'completed':'active')+'">'+o.status+'</span>';
+      div.innerHTML='<div class="oh-head"><div class="oh-ref">#'+o.id+' — '+label+'</div><div class="oh-time">'+t+'</div></div><div class="oh-detail">'+((Array.isArray(items)?items:[])).map(i=>i.q+'× '+i.n).join(', ')+'</div><div class="oh-detail">£'+parseFloat(o.total).toFixed(2)+' · '+payLabel+(isDel?' · '+o.delivery_name+' · '+o.delivery_phone:'')+(isTA&&o.delivery_phone?' · '+o.delivery_phone:'')+(o.customer_email?' · '+o.customer_email:'')+stageBadge+'</div><span class="oh-status '+(o.status==='completed'?'completed':'active')+'">'+o.status+'</span>';
       if(isDel&&o.status==='active'){
         const btnRow=document.createElement('div');btnRow.style.marginTop='8px';
         if(!o.dispatched_at){
