@@ -1558,12 +1558,23 @@ function detectLocation(){
   spinner.style.display='block';
   fallback.style.display='none';
   choice.style.display='none';
+  let settled=false;
   function showChoice(msg,showFallback){
+    if(settled)return;
+    settled=true;
+    if(hardTimeout)clearTimeout(hardTimeout);
     spinner.style.display='none';
     statusEl.textContent=msg;
     fallback.style.display=showFallback?'block':'none';
     choice.style.display='flex';
   }
+  // Belt-and-braces: if a permission prompt is shown and never answered, the
+  // browser's own getCurrentPosition timeout never starts counting (it only
+  // applies once permission is resolved). Force the choice screen either way
+  // after 10s so the customer is never stuck staring at a spinner.
+  const hardTimeout=setTimeout(()=>{
+    showChoice("Taking a while to find you — how would you like to order?",true);
+  },10000);
   if(!('geolocation' in navigator)){
     showChoice("Location isn't available on this device — how are you ordering?",true);
     return;
